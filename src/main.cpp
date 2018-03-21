@@ -197,7 +197,10 @@ int main() {
   	map_waypoints_dy.push_back(d_y);
   }
 
-  h.onMessage([&map_waypoints_x,&map_waypoints_y,&map_waypoints_s,&map_waypoints_dx,&map_waypoints_dy](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length,
+  int lane = 1;  //lane id
+  double ref_vel = 0.0;  //mph
+
+  h.onMessage([&ref_vel, &map_waypoints_x,&map_waypoints_y,&map_waypoints_s,&map_waypoints_dx,&map_waypoints_dy, &lane](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length,
                      uWS::OpCode opCode) {
     // "42" at the start of the message means there's a websocket message event.
     // The 4 signifies a websocket message
@@ -242,9 +245,6 @@ int main() {
 
           	// TODO: define a path made up of (x,y) points that the car will visit sequentially every .02 seconds
 
-          	int lane = 1;  //lane id
-          	double ref_vel = 49.5;  //mph
-
           	int prev_size = previous_path_x.size();
 
           	if (prev_size > 0) {
@@ -264,9 +264,16 @@ int main() {
           			check_car_s += ((double)prev_size*0.02*check_speed);
 
           			if ((check_car_s > car_s) && (check_car_s - car_s) < 30) {
-          				ref_vel = 29.5;
+          				too_close = true;
           			}
           		}
+          	}
+
+          	if (too_close) {
+          		ref_vel -= 0.224;
+          	}
+          	else if (ref_vel < 49.5) {
+          		ref_vel += 0.224;
           	}
 
           	//sparse vector x, y points
