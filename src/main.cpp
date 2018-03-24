@@ -338,7 +338,7 @@ int main() {
           	//transform points into car frame of reference
           	for (int i = 0; i < ptsx.size(); i++) {
           		double shift_x = ptsx[i] - ref_x;
-          		double shift_y = ptsx[i] - ref_y;
+          		double shift_y = ptsy[i] - ref_y;
           		ptsx[i] = (shift_x * cos(0-ref_yaw) - shift_y * sin(0-ref_yaw));
           		ptsy[i] = (shift_x * sin(0-ref_yaw) + shift_y * cos(0-ref_yaw));
           	}
