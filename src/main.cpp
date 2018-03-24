@@ -299,8 +299,8 @@ int main() {
           	double ref_yaw = deg2rad(car_yaw);
 
           	if (prev_size < 2) {
-          		double prev_car_x = car_x - cos(ref_yaw);
-          		double prev_car_y = car_y - sin(ref_yaw);
+          		double prev_car_x = car_x - cos(car_yaw);  //TODO: check if it should be ref_yaw here
+          		double prev_car_y = car_y - sin(car_yaw);  //TODO: check if it should be ref_yaw here
 
           		ptsx.push_back(prev_car_x);
           		ptsx.push_back(car_x);
@@ -358,7 +358,7 @@ int main() {
 
           	double x_add_on = 0.0;
 
-          	for (int i = 0; i < 50 - prev_size; i++) {
+          	for (int i = 1; i <= 50 - prev_size; i++) {
           		double N = (target_dist / (0.02*ref_vel/2.24));
           		double x_point = x_add_on + (target_x)/N;
           		double y_point = s(x_point);
@@ -369,7 +369,7 @@ int main() {
           		double y_ref = y_point;
 
           		x_point = (x_ref * cos(ref_yaw) - y_ref * sin(ref_yaw));
-          		y_point = (y_ref * sin(ref_yaw) + y_ref * cos(ref_yaw));
+          		y_point = (x_ref * sin(ref_yaw) + y_ref * cos(ref_yaw));
 
           		x_point += ref_x;
           		y_point += ref_y;
