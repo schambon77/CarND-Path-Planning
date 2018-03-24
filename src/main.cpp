@@ -247,7 +247,15 @@ int main() {
 
           	int prev_size = previous_path_x.size();
 
+          	cout << "Car x: " << car_x << endl;
+          	cout << "Car y: " << car_y << endl;
+          	cout << "Car s: " << car_s << endl;
+          	cout << "Car d: " << car_d << endl;
+          	cout << "Car yaw: " << car_yaw << endl;
+          	cout << "Car speed: " << car_speed << endl;
           	cout << "Previous path size: " << prev_size << endl;
+          	cout << "End path s: " << end_path_s << endl;
+          	cout << "End path d: " << end_path_d << endl;
 
           	if (prev_size > 0) {
           		car_s = end_path_s;
@@ -373,6 +381,8 @@ int main() {
           	for (int i = 0; i < next_x_vals.size(); i++) {
           		//cout << "Next x and y - " << i << ": " << next_x_vals[i] << ", " << next_y_vals[i] << endl;
           	}
+
+          	cout << " " << endl;
 
           	//END
 
