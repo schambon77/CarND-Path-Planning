@@ -265,6 +265,10 @@ int main() {
 
           			if ((check_car_s > car_s) && (check_car_s - car_s) < 30) {
           				too_close = true;
+
+          				if (lane > 0) {
+          					lane = 0;
+          				}
           			}
           		}
           	}
@@ -362,6 +366,10 @@ int main() {
 
           		next_x_vals.push_back(x_point);
           		next_y_vals.push_back(y_point);
+          	}
+
+          	for (int i = 0; i < next_x_vals.size(); i++) {
+          		cout << "Next x and y - " << i << ": " << next_x_vals[i] << ", " << next_y_vals[i] << endl;
           	}
 
           	//END
