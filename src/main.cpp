@@ -187,7 +187,7 @@ double get_simple_prediction(double s, double vx, double vy, int number_timestep
 	return predicted_s;
 }
 
-void get_trajectory(double car_x, double car_y, double car_yaw, const vector<double> &previous_path_x, const vector<double> &previous_path_y,
+void get_trajectory(double car_x, double car_y, double car_yaw, double car_s, const vector<double> &previous_path_x, const vector<double> &previous_path_y,
 		const vector<double> &map_waypoints_s, const vector<double> &map_waypoints_x, const vector<double> &map_waypoints_y, int lane, double ref_vel,
 		vector<double> &next_x_vals, vector<double> &next_y_vals) {
 
@@ -413,7 +413,7 @@ int main() {
           		ref_vel += 0.224;
           	}
 
-          	get_trajectory(car_x, car_y, car_yaw, previous_path_x, previous_path_y, map_waypoints_s, map_waypoints_x, map_waypoints_y, lane, ref_vel, next_x_vals, next_y_vals);
+          	get_trajectory(car_x, car_y, car_yaw, car_s, previous_path_x, previous_path_y, map_waypoints_s, map_waypoints_x, map_waypoints_y, lane, ref_vel, next_x_vals, next_y_vals);
 
 //          	//sparse vector x, y points
 //          	vector<double> ptsx;
