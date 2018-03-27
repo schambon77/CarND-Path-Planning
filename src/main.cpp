@@ -201,7 +201,7 @@ void get_traj(double car_x, double car_y, double car_vx, double car_vy, double c
   	double ref_yaw = deg2rad(car_yaw);
 
   	int prev_size = 0;
-  	if (previous_path_x != null) {
+  	if (previous_path_x != NULL) {
   	  	prev_size = previous_path_x.size();
 		if (prev_size < 2) {
 			double prev_car_x = car_x - cos(car_yaw);
@@ -232,7 +232,7 @@ void get_traj(double car_x, double car_y, double car_vx, double car_vy, double c
 		ptsx.push_back(car_x);
 		ptsy.push_back(car_y);
 
-		ref_vel = sqrt(vx*vx + vy*vy);
+		ref_vel = sqrt(car_vx*car_vx + car_vy*car_vy);
   	}
 
   	vector<double> next_wp0 = getXY(car_s + 30, (2 + 4*lane), map_waypoints_s, map_waypoints_x, map_waypoints_y);
