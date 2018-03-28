@@ -171,7 +171,9 @@ vector<string> get_successor_states(const double ref_vel, const int lane) {
     if (ref_vel < 49.5) {
         states.push_back("KLA");
     }
-    states.push_back("KLD");
+    if (ref_vel > 0) {
+    	states.push_back("KLD");
+    }
     if (lane > 0) {
     	states.push_back("LCL");
     }
@@ -531,7 +533,7 @@ int main() {
 						car_vy = sensor_fusion[front_car_id][4];
 						get_prediction(car_vx, car_vy, car_s, car_d, map_waypoints_s, map_waypoints_x, map_waypoints_y, tmp_next_x_vals, tmp_next_y_vals);
 					}
-					cost = get_cost(car_next_x_vals, car_next_y_vals, tmp_next_x_vals, tmp_next_y_vals, ref_vel);
+					cost = get_cost(car_next_x_vals, car_next_y_vals, tmp_next_x_vals, tmp_next_y_vals, tmp_ref_vel);
           		}
           		else {
           			vector<int> side_cars;
@@ -553,7 +555,7 @@ int main() {
 						car_vx = sensor_fusion[i][3];
 						car_vy = sensor_fusion[i][4];
 						get_prediction(car_vx, car_vy, car_s, car_d, map_waypoints_s, map_waypoints_x, map_waypoints_y, tmp_next_x_vals, tmp_next_y_vals);
-						cost = get_cost(car_next_x_vals, car_next_y_vals, tmp_next_x_vals, tmp_next_y_vals, ref_vel);
+						cost = get_cost(car_next_x_vals, car_next_y_vals, tmp_next_x_vals, tmp_next_y_vals, tmp_ref_vel);
 						if (cost < lane_change_min_cost) {
 							lane_change_min_cost = cost;
 						}
