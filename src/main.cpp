@@ -160,23 +160,23 @@ vector<double> getXY(double s, double d, const vector<double> &maps_s, const vec
 
 }
 
-vector<string> get_successor_states(string current_state, int current_lane) {
-	//KLA, KLD, LCL, LCR
+vector<string> get_successor_states(const double ref_vel, const int lane) {
+	//KLN: keep lane no change
+	//KLA: keep lane accelerate
+	//KLD: keep lane decelerate
+	//LCL: lane change left
+	//LCR: lane change right
     vector<string> states;
-    states.push_back("KL");
-    if(current_state.compare("KL") == 0) {
-        states.push_back("PLCL");
-        states.push_back("PLCR");
-    } else if (current_state.compare("PLCL") == 0) {
-        if (current_lane > 0) {
-            states.push_back("PLCL");
-            states.push_back("LCL");
-        }
-    } else if (current_state.compare("PLCR") == 0) {
-        if (current_lane < 2) {
-            states.push_back("PLCR");
-            states.push_back("LCR");
-        }
+    states.push_back("KLN");
+    if (ref_vel < 49.5) {
+        states.push_back("KLA");
+    }
+    states.push_back("KLD");
+    if (lane > 0) {
+    	states.push_back("LCL");
+    }
+    if (lane < 2) {
+    	states.push_back("LCR");
     }
     return states;
 }
@@ -300,7 +300,7 @@ void get_trajectory(double car_x, double car_y, double car_yaw, double car_s, co
 double get_collision_cost(const vector<double> &trajectory_x, const vector<double> &trajectory_y, const vector<double> &prediction_x, const vector<double> &prediction_y) {
 	double cost = 0.0;
 	double dist = 0.0;
-	for (int i = 0; i < trajectory_x.size(); i++) {
+	for (int i = 0; i < prediction_x.size(); i++) {
 		dist = distance(trajectory_x[i], trajectory_y[i], prediction_x[i], prediction_y[i]);
 		if (dist < 10.0) { //avoid trajectories less than 10 meters away from other vehicles
 			cost = 1.0;
@@ -308,6 +308,85 @@ double get_collision_cost(const vector<double> &trajectory_x, const vector<doubl
 		}
 	}
 	return cost;
+}
+
+double get_too_close_cost(const vector<double> &trajectory_x, const vector<double> &trajectory_y, const vector<double> &prediction_x, const vector<double> &prediction_y, const double ref_vel) {
+	double cost = 0.0;
+	double dist = 0.0;
+	double safety_dist = ref_vel * 1.61 * 2.0;   //compute safety distance related to keeping 2 seconds interval from other car
+	for (int i = 0; i < prediction_x.size(); i++) {
+		dist = distance(trajectory_x[i], trajectory_y[i], prediction_x[i], prediction_y[i]);
+		if (dist < safety_dist) { //avoid trajectories less than 10 meters away from other vehicles
+			cost = (safety_dist - dist)/safety_dist;
+			break;
+		}
+	}
+	return cost;
+}
+
+double get_efficiency_cost(const double ref_vel) {
+	double speed_limit = 49.5;
+	double cost = 0.0;
+	if (ref_vel > speed_limit) {
+		cost = 1.0;
+	}
+	else {
+		cost = (speed_limit - ref_vel)/speed_limit;
+	}
+	return cost;
+}
+
+double get_cost(const vector<double> &trajectory_x, const vector<double> &trajectory_y, const vector<double> &prediction_x, const vector<double> &prediction_y, const double ref_vel) {
+	double cost = 0.0;
+	cost += 1.0 * get_collision_cost(trajectory_x, trajectory_y, prediction_x, prediction_y);
+	cost += 1.0 * get_too_close_cost(trajectory_x, trajectory_y, prediction_x, prediction_y, ref_vel);
+	cost += 1.0 * get_efficiency_cost(ref_vel);
+	return cost;
+}
+
+int get_closest_front_car_in_lane(const vector<vector<double>> sensor_fusion, int lane, double car_s) {
+	int ret = -1;
+	double dist_s = 999999.0;
+  	for (int i = 0; i < sensor_fusion.size(); i++) {
+  		float d = sensor_fusion[i][6];
+  		if (d < (2+4*lane+2) && (d> (2+4*lane-2))) {  //a car is in lane
+  			double check_car_s = sensor_fusion[i][5];
+  			if (check_car_s > car_s) {
+  				if (check_car_s - car_s < dist_s) {
+  					ret = i;
+  					dist_s = check_car_s - car_s;
+  				}
+  			}
+  		}
+  	}
+  	return ret;
+}
+
+int get_closest_cars_in_side_lane(const vector<vector<double>> &sensor_fusion, const int lane, const double car_s, const double ref_vel, bool is_right) {
+	vector<int> ret;
+	double dist_radius = ref_vel * 1.61 * 5.0;   //consider all vehicles within 5 seconds
+  	int lane_of_interest = 0;
+  	if (is_right) {
+  		if (lane > 0) {
+  			lane_of_interest = lane - 1;
+  		}
+  	}
+  	else {
+  		if (lane < 2) {
+  			lane_of_interest = lane + 1;
+  		}
+  	}
+	for (int i = 0; i < sensor_fusion.size(); i++) {
+  		float d = sensor_fusion[i][6];
+  		if (d < (2+4*lane_of_interest+2) && (d> (2+4*lane_of_interest-2))) {  //a car is in lane of interest
+  			double check_car_s = sensor_fusion[i][5];
+  			double dist = abs(check_car_s - car_s);   //approximation, forget about d
+  			if (dist < dist_radius) {
+  				ret.push_back(i);
+  			}
+  		}
+  	}
+  	return ret;
 }
 
 int main() {
@@ -412,36 +491,105 @@ int main() {
           		car_s = end_path_s;
           	}
 
-          	vector<string> successor_states = get_successor_states(state, lane);
+          	vector<string> successor_states = get_successor_states(ref_vel, lane);
 
-          	bool too_close = false;
+          	int front_car_id = get_closest_front_car_in_lane(sensor_fusion, lane, car_s);
+          	vector<int> right_cars = get_closest_cars_in_side_lane(sensor_fusion, lane, car_s, ref_vel, true);
+          	vector<int> left_cars = get_closest_cars_in_side_lane(sensor_fusion, lane, car_s, ref_vel, false);
 
-          	for (int i = 0; i < sensor_fusion.size(); i++) {
-          		float d = sensor_fusion[i][6];
-          		if (d < (2+4*lane+2) && (d> (2+4*lane-2))) {  //a car is in lane
-          			double vx = sensor_fusion[i][3];
-          			double vy = sensor_fusion[i][4];
-          			double check_car_s = sensor_fusion[i][5];
-          			check_car_s = get_simple_prediction(check_car_s, vx, vy, prev_size);
-
-          			if ((check_car_s > car_s) && (check_car_s - car_s) < 30) {
-          				too_close = true;
-
-          				if (lane > 0) {
-          					lane = 0;
-          				}
-          			}
+          	double cost = 0.0;
+          	double min_cost = 999999.0;
+          	int min_cost_lane = lane;
+          	double min_cost_ref_vel = ref_vel;
+          	string next_state = 'KLN';
+          	for (int i = 0; i < successor_states.size(); i++) {
+      			double tmp_ref_vel = ref_vel;
+      			int tmp_lane = lane;
+          		if (successor_states[i] == 'KLN' || successor_states[i] == 'KLA' || successor_states[i] == 'KLD') {
+                  	if (successor_states[i] == 'KLD') {
+                  		tmp_ref_vel -= 0.224;
+                  	}
+                  	else if (successor_states[i] == 'KLA') {
+                  		tmp_ref_vel += 0.224;
+                  	}
+                  	vector<double> car_next_x_vals;
+                  	vector<double> car_next_y_vals;
+                  	vector<double> tmp_next_x_vals;
+                  	vector<double> tmp_next_y_vals;
+		          	get_trajectory(car_x, car_y, car_yaw, car_s, previous_path_x, previous_path_y, map_waypoints_s, map_waypoints_x, map_waypoints_y, tmp_lane, tmp_ref_vel, car_next_x_vals, car_next_y_vals);
+					if (front_car_id >= 0) {
+						get_prediction(car_vx, car_vy, car_s, car_d, map_waypoints_s, map_waypoints_x, map_waypoints_y, tmp_next_x_vals, tmp_next_y_vals);
+					}
+					cost = get_cost(car_next_x_vals, car_next_y_vals, tmp_next_x_vals, tmp_next_y_vals, ref_vel);
           		}
+          		else {
+          			vector<int> side_cars;
+          			if (successor_states[i] == 'LCL') {
+          				tmp_lane -= 1;
+          				side_cars = left_cars;
+          			}
+          			else if (successor_states[i] == 'LCR') {
+          				tmp_lane += 1;
+          				side_cars = right_cars;
+          			}
+                  	vector<double> car_next_x_vals;
+                  	vector<double> car_next_y_vals;
+                  	get_trajectory(car_x, car_y, car_yaw, car_s, previous_path_x, previous_path_y, map_waypoints_s, map_waypoints_x, map_waypoints_y, tmp_lane, tmp_ref_vel, car_next_x_vals, car_next_y_vals);
+          			double lane_change_min_cost = 999999.0;
+          			for (int i = 0; i < side_cars.size(); i++) {
+                      	vector<double> tmp_next_x_vals;
+                      	vector<double> tmp_next_y_vals;
+						get_prediction(car_vx, car_vy, car_s, car_d, map_waypoints_s, map_waypoints_x, map_waypoints_y, tmp_next_x_vals, tmp_next_y_vals);
+						cost = get_cost(car_next_x_vals, car_next_y_vals, tmp_next_x_vals, tmp_next_y_vals, ref_vel);
+						if (cost < lane_change_min_cost) {
+							lane_change_min_cost = cost;
+						}
+          			}
+          			cost = lane_change_min_cost;
+          		}
+				if (cost < min_cost) {
+					next_state = successor_states[i];
+					min_cost = cost;
+					min_cost_ref_vel = tmp_ref_vel;
+					min_cost_lane = tmp_lane;
+				}
           	}
 
-          	if (too_close) {
-          		ref_vel -= 0.224;
-          	}
-          	else if (ref_vel < 49.5) {
-          		ref_vel += 0.224;
-          	}
-
+          	//execute next step
+          	lane = min_cost_lane;
+          	ref_vel = min_cost_ref_vel;
           	get_trajectory(car_x, car_y, car_yaw, car_s, previous_path_x, previous_path_y, map_waypoints_s, map_waypoints_x, map_waypoints_y, lane, ref_vel, next_x_vals, next_y_vals);
+
+          	cout << 'Next state: ' <<  next_state << ' in lane: ' << lane << ' at speed: ' << ref_vel << endl;
+
+//          	bool too_close = false;
+//
+//          	for (int i = 0; i < sensor_fusion.size(); i++) {
+//          		float d = sensor_fusion[i][6];
+//          		if (d < (2+4*lane+2) && (d> (2+4*lane-2))) {  //a car is in lane
+//          			double vx = sensor_fusion[i][3];
+//          			double vy = sensor_fusion[i][4];
+//          			double check_car_s = sensor_fusion[i][5];
+//          			check_car_s = get_simple_prediction(check_car_s, vx, vy, prev_size);
+//
+//          			if ((check_car_s > car_s) && (check_car_s - car_s) < 30) {
+//          				too_close = true;
+//
+//          				if (lane > 0) {
+//          					lane = 0;
+//          				}
+//          			}
+//          		}
+//          	}
+//
+//          	if (too_close) {
+//          		ref_vel -= 0.224;
+//          	}
+//          	else if (ref_vel < 49.5) {
+//          		ref_vel += 0.224;
+//          	}
+//
+//          	get_trajectory(car_x, car_y, car_yaw, car_s, previous_path_x, previous_path_y, map_waypoints_s, map_waypoints_x, map_waypoints_y, lane, ref_vel, next_x_vals, next_y_vals);
 
 //          	//sparse vector x, y points
 //          	vector<double> ptsx;
