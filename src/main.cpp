@@ -362,7 +362,7 @@ int get_closest_front_car_in_lane(const vector<vector<double>> sensor_fusion, in
   	return ret;
 }
 
-int get_closest_cars_in_side_lane(const vector<vector<double>> &sensor_fusion, const int lane, const double car_s, const double ref_vel, bool is_right) {
+vector<int> get_closest_cars_in_side_lane(const vector<vector<double>> &sensor_fusion, const int lane, const double car_s, const double ref_vel, bool is_right) {
 	vector<int> ret;
 	double dist_radius = ref_vel * 1.61 * 5.0;   //consider all vehicles within 5 seconds
   	int lane_of_interest = 0;
