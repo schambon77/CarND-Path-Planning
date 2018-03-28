@@ -692,7 +692,7 @@ int main() {
 //          	}
 
           	for (int i = 0; i < next_x_vals.size(); i++) {
-          		//cout << "Next x and y - " << i << ": " << next_x_vals[i] << ", " << next_y_vals[i] << endl;
+          		cout << "Next x and y - " << i << ": " << next_x_vals[i] << ", " << next_y_vals[i] << endl;
           	}
 
           	cout << " " << endl;
