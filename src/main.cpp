@@ -501,17 +501,17 @@ int main() {
           	double min_cost = 999999.0;
           	int min_cost_lane = lane;
           	double min_cost_ref_vel = ref_vel;
-          	string next_state = 'KLN';
+          	string next_state = "KLN";
           	for (int i = 0; i < successor_states.size(); i++) {
       			double tmp_ref_vel = ref_vel;
       			int tmp_lane = lane;
       			double car_vx = 0.0;
       			double car_vy = 0.0;
-          		if (successor_states[i].compare('KLN') == 0 || successor_states[i].compare('KLA') == 0 || successor_states[i].compare('KLD') == 0) {
-                  	if (successor_states[i].compare('KLD') == 0) {
+          		if (successor_states[i].compare("KLN") == 0 || successor_states[i].compare("KLA") == 0 || successor_states[i].compare("KLD") == 0) {
+                  	if (successor_states[i].compare("KLD") == 0) {
                   		tmp_ref_vel -= 0.224;
                   	}
-                  	else if (successor_states[i].compare('KLA') == 0) {
+                  	else if (successor_states[i].compare("KLA") == 0) {
                   		tmp_ref_vel += 0.224;
                   	}
                   	vector<double> car_next_x_vals;
@@ -528,7 +528,7 @@ int main() {
           		}
           		else {
           			vector<int> side_cars;
-          			if (successor_states[i].compare('LCL') == 0) {
+          			if (successor_states[i].compare("LCL") == 0) {
           				tmp_lane -= 1;
           				side_cars = left_cars;
           			}
@@ -566,7 +566,7 @@ int main() {
           	ref_vel = min_cost_ref_vel;
           	get_trajectory(car_x, car_y, car_yaw, car_s, previous_path_x, previous_path_y, map_waypoints_s, map_waypoints_x, map_waypoints_y, lane, ref_vel, next_x_vals, next_y_vals);
 
-          	cout << 'Next state: ' <<  next_state << ' in lane: ' << lane << ' at speed: ' << ref_vel << endl;
+          	cout << "Next state: " <<  next_state << " in lane: " << lane << " at speed: " << ref_vel << endl;
 
 //          	bool too_close = false;
 //
