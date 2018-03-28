@@ -338,8 +338,8 @@ double get_efficiency_cost(const double ref_vel) {
 
 double get_cost(const vector<double> &trajectory_x, const vector<double> &trajectory_y, const vector<double> &prediction_x, const vector<double> &prediction_y, const double ref_vel) {
 	double cost = 0.0;
-	cost += 1.0 * get_collision_cost(trajectory_x, trajectory_y, prediction_x, prediction_y);
-	cost += 1.0 * get_too_close_cost(trajectory_x, trajectory_y, prediction_x, prediction_y, ref_vel);
+	cost += 10.0 * get_collision_cost(trajectory_x, trajectory_y, prediction_x, prediction_y);
+	cost += 5.0 * get_too_close_cost(trajectory_x, trajectory_y, prediction_x, prediction_y, ref_vel);
 	cost += 1.0 * get_efficiency_cost(ref_vel);
 	return cost;
 }
@@ -505,11 +505,13 @@ int main() {
           	for (int i = 0; i < successor_states.size(); i++) {
       			double tmp_ref_vel = ref_vel;
       			int tmp_lane = lane;
-          		if (successor_states[i] == 'KLN' || successor_states[i] == 'KLA' || successor_states[i] == 'KLD') {
+      			double car_vx = 0.0;
+      			double car_vy = 0.0;
+          		if (successor_states[i].compare('KLN') == 0 || successor_states[i].compare('KLA') == 0 || successor_states[i].compare('KLD') == 0) {
                   	if (successor_states[i] == 'KLD') {
                   		tmp_ref_vel -= 0.224;
                   	}
-                  	else if (successor_states[i] == 'KLA') {
+                  	else if (successor_states[i].compare('KLA') == 0) {
                   		tmp_ref_vel += 0.224;
                   	}
                   	vector<double> car_next_x_vals;
@@ -518,17 +520,19 @@ int main() {
                   	vector<double> tmp_next_y_vals;
 		          	get_trajectory(car_x, car_y, car_yaw, car_s, previous_path_x, previous_path_y, map_waypoints_s, map_waypoints_x, map_waypoints_y, tmp_lane, tmp_ref_vel, car_next_x_vals, car_next_y_vals);
 					if (front_car_id >= 0) {
+						car_vx = sensor_fusion[front_car_id][3];
+						car_vy = sensor_fusion[front_car_id][4];
 						get_prediction(car_vx, car_vy, car_s, car_d, map_waypoints_s, map_waypoints_x, map_waypoints_y, tmp_next_x_vals, tmp_next_y_vals);
 					}
 					cost = get_cost(car_next_x_vals, car_next_y_vals, tmp_next_x_vals, tmp_next_y_vals, ref_vel);
           		}
           		else {
           			vector<int> side_cars;
-          			if (successor_states[i] == 'LCL') {
+          			if (successor_states[i].compare('LCL') == 0) {
           				tmp_lane -= 1;
           				side_cars = left_cars;
           			}
-          			else if (successor_states[i] == 'LCR') {
+          			else if (successor_states[i].compare('LCR') == 0) {
           				tmp_lane += 1;
           				side_cars = right_cars;
           			}
@@ -539,6 +543,8 @@ int main() {
           			for (int i = 0; i < side_cars.size(); i++) {
                       	vector<double> tmp_next_x_vals;
                       	vector<double> tmp_next_y_vals;
+						car_vx = sensor_fusion[i][3];
+						car_vy = sensor_fusion[i][4];
 						get_prediction(car_vx, car_vy, car_s, car_d, map_waypoints_s, map_waypoints_x, map_waypoints_y, tmp_next_x_vals, tmp_next_y_vals);
 						cost = get_cost(car_next_x_vals, car_next_y_vals, tmp_next_x_vals, tmp_next_y_vals, ref_vel);
 						if (cost < lane_change_min_cost) {
