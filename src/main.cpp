@@ -508,7 +508,7 @@ int main() {
       			double car_vx = 0.0;
       			double car_vy = 0.0;
           		if (successor_states[i].compare('KLN') == 0 || successor_states[i].compare('KLA') == 0 || successor_states[i].compare('KLD') == 0) {
-                  	if (successor_states[i] == 'KLD') {
+                  	if (successor_states[i].compare('KLD') == 0) {
                   		tmp_ref_vel -= 0.224;
                   	}
                   	else if (successor_states[i].compare('KLA') == 0) {
@@ -532,7 +532,7 @@ int main() {
           				tmp_lane -= 1;
           				side_cars = left_cars;
           			}
-          			else if (successor_states[i].compare('LCR') == 0) {
+          			else if (successor_states[i].compare("LCR") == 0) {
           				tmp_lane += 1;
           				side_cars = right_cars;
           			}
