@@ -263,6 +263,9 @@ void get_trajectory(double car_x, double car_y, double car_yaw, double car_s, co
 
   	tk::spline s;
 
+  	for (int i = 0; i < ptsx.size(); i++) {
+  		cout << "Pt: " << i << ", x: " << ptsx[i] << ", y: " << ptsy[i] << endl;
+  	}
   	s.set_points(ptsx, ptsy);
 
   	for (int i = 0; i < prev_size; i++) {
@@ -477,15 +480,15 @@ int main() {
 
           	int prev_size = previous_path_x.size();
 
-          	cout << "Car x: " << car_x << endl;
-          	cout << "Car y: " << car_y << endl;
-          	cout << "Car s: " << car_s << endl;
-          	cout << "Car d: " << car_d << endl;
-          	cout << "Car yaw: " << car_yaw << endl;
-          	cout << "Car speed: " << car_speed << endl;
-          	cout << "Previous path size: " << prev_size << endl;
-          	cout << "End path s: " << end_path_s << endl;
-          	cout << "End path d: " << end_path_d << endl;
+//          	cout << "Car x: " << car_x << endl;
+//          	cout << "Car y: " << car_y << endl;
+//          	cout << "Car s: " << car_s << endl;
+//          	cout << "Car d: " << car_d << endl;
+//          	cout << "Car yaw: " << car_yaw << endl;
+//          	cout << "Car speed: " << car_speed << endl;
+//          	cout << "Previous path size: " << prev_size << endl;
+//          	cout << "End path s: " << end_path_s << endl;
+//          	cout << "End path d: " << end_path_d << endl;
 
           	if (prev_size > 0) {
           		car_s = end_path_s;
@@ -503,6 +506,7 @@ int main() {
           	double min_cost_ref_vel = ref_vel;
           	string next_state = "KLN";
           	for (int i = 0; i < successor_states.size(); i++) {
+          		cout << "Checking potential next state : " << successor_states[i] << endl;
       			double tmp_ref_vel = ref_vel;
       			int tmp_lane = lane;
       			double car_vx = 0.0;
@@ -697,7 +701,7 @@ int main() {
           	msgJson["next_y"] = next_y_vals;
 
           	auto msg = "42[\"control\","+ msgJson.dump()+"]";
-      		cout << "JSON msg back to simulator: " << msg << endl;
+      		//cout << "JSON msg back to simulator: " << msg << endl;
 
           	//this_thread::sleep_for(chrono::milliseconds(1000));
           	ws.send(msg.data(), msg.length(), uWS::OpCode::TEXT);
