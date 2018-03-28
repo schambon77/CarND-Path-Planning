@@ -312,6 +312,7 @@ double get_collision_cost(const vector<double> &trajectory_x, const vector<doubl
 			break;
 		}
 	}
+	cout << "Collision cost: " << cost << endl;
 	return cost;
 }
 
@@ -326,6 +327,7 @@ double get_too_close_cost(const vector<double> &trajectory_x, const vector<doubl
 			break;
 		}
 	}
+	cout << "Too close cost: " << cost << endl;
 	return cost;
 }
 
@@ -338,6 +340,7 @@ double get_efficiency_cost(const double ref_vel) {
 	else {
 		cost = (speed_limit - ref_vel)/speed_limit;
 	}
+	cout << "Efficiency cost: " << cost << endl;
 	return cost;
 }
 
@@ -346,6 +349,7 @@ double get_cost(const vector<double> &trajectory_x, const vector<double> &trajec
 	cost += 10.0 * get_collision_cost(trajectory_x, trajectory_y, prediction_x, prediction_y);
 	cost += 5.0 * get_too_close_cost(trajectory_x, trajectory_y, prediction_x, prediction_y, ref_vel);
 	cost += 1.0 * get_efficiency_cost(ref_vel);
+	cout << "Cost: " << cost << endl;
 	return cost;
 }
 
@@ -474,9 +478,6 @@ int main() {
 
           	json msgJson;
 
-          	vector<double> next_x_vals;
-          	vector<double> next_y_vals;
-
 
           	// TODO: define a path made up of (x,y) points that the car will visit sequentially every .02 seconds
 
@@ -570,6 +571,8 @@ int main() {
           	//execute next step
           	lane = min_cost_lane;
           	ref_vel = min_cost_ref_vel;
+          	vector<double> next_x_vals;
+          	vector<double> next_y_vals;
           	get_trajectory(car_x, car_y, car_yaw, car_s, previous_path_x, previous_path_y, map_waypoints_s, map_waypoints_x, map_waypoints_y, lane, ref_vel, next_x_vals, next_y_vals);
 
           	cout << "Next state: " <<  next_state << " in lane: " << lane << " at speed: " << ref_vel << endl;
