@@ -188,7 +188,7 @@ double get_simple_prediction(double s, double vx, double vy, int number_timestep
 	return predicted_s;
 }
 
-void get_prediction(const double car_vx, const double car_vy, const float car_s, const float car_d,
+void get_prediction(double car_vx, double car_vy, float car_s, float car_d,
 		const vector<double> &map_waypoints_s, const vector<double> &map_waypoints_x, const vector<double> &map_waypoints_y,
 		vector<double> &next_x_vals, vector<double> &next_y_vals) {
 
@@ -202,13 +202,15 @@ void get_prediction(const double car_vx, const double car_vy, const float car_s,
 	}
 }
 
-void get_trajectory(const float car_x, const float car_y, const float car_yaw, const float car_s, const vector<double> &previous_path_x, const vector<double> &previous_path_y,
+void get_trajectory(double car_x, double car_y, double car_yaw, double car_s, const vector<double> &previous_path_x, const vector<double> &previous_path_y,
 		const vector<double> &map_waypoints_s, const vector<double> &map_waypoints_x, const vector<double> &map_waypoints_y, const int lane, const double ref_vel,
 		vector<double> &next_x_vals, vector<double> &next_y_vals) {
 
   	//sparse vector x, y points
   	vector<double> ptsx;
   	vector<double> ptsy;
+
+  	cout << "Car_x: " << car_x << endl;
 
   	double ref_x = car_x;
   	double ref_y = car_y;
