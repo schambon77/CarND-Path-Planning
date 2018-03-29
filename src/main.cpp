@@ -212,8 +212,6 @@ void get_trajectory(double car_x, double car_y, double car_yaw, double car_s, co
   	vector<double> ptsx;
   	vector<double> ptsy;
 
-  	cout << "Car_x: " << car_x << endl;
-
   	double ref_x = car_x;
   	double ref_y = car_y;
   	double ref_yaw = deg2rad(car_yaw);
@@ -351,7 +349,7 @@ double get_cost(const vector<double> &trajectory_x, const vector<double> &trajec
 	cost += 10.0 * get_collision_cost(trajectory_x, trajectory_y, prediction_x, prediction_y);
 	cost += 5.0 * get_too_close_cost(trajectory_x, trajectory_y, prediction_x, prediction_y, ref_vel);
 	cost += 1.0 * get_efficiency_cost(ref_vel);
-	cout << "Cost: " << cost << endl;
+	//cout << "Cost: " << cost << endl;
 	return cost;
 }
 
