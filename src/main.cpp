@@ -307,6 +307,7 @@ double get_collision_cost(const vector<double> &trajectory_x, const vector<doubl
 	double dist = 0.0;
 	for (int i = 0; i < prediction_x.size(); i++) {
 		dist = distance(trajectory_x[i], trajectory_y[i], prediction_x[i], prediction_y[i]);
+		cout << "i: " << i << ", trajectory_x: " << trajectory_x[i] << ", trajectory_y: " << trajectory_y[i] << ", prediction_x: " << prediction_x[i] << ", prediction_y: " << prediction_y[i] << ", dist: " << dist << endl;
 		if (dist < 10.0) { //avoid trajectories less than 10 meters away from other vehicles
 			cost = 1.0;
 			break;
@@ -320,10 +321,9 @@ double get_too_close_cost(const vector<double> &trajectory_x, const vector<doubl
 	double cost = 0.0;
 	double dist = 0.0;
 	double safety_dist = ref_vel * 1.61 * 0.28 * 2.0;   //compute safety distance related to keeping 2 seconds interval from other car
-	cout << "Safety distance: " << safety_dist << endl;
+	//cout << "Safety distance: " << safety_dist << endl;
 	for (int i = 0; i < prediction_x.size(); i++) {
 		dist = distance(trajectory_x[i], trajectory_y[i], prediction_x[i], prediction_y[i]);
-		cout << "i: " << i << ", trajectory_x: " << trajectory_x[i] << ", trajectory_y: " << trajectory_y[i] << ", prediction_x: " << prediction_x[i] << ", prediction_y: " << prediction_y[i] << ", dist: " << dist << endl;
 		if (dist < safety_dist) { //avoid trajectories less than 10 meters away from other vehicles
 			cost = (safety_dist - dist)/safety_dist;
 			break;
@@ -515,8 +515,10 @@ int main() {
           		cout << "Checking potential next state : " << successor_states[i] << endl;
       			double tmp_ref_vel = ref_vel;
       			int tmp_lane = lane;
-      			double car_vx = 0.0;
-      			double car_vy = 0.0;
+      			double tmp_car_vx = 0.0;
+      			double tmp_car_vy = 0.0;
+      			double tmp_car_s = 0.0;
+      			double tmp_car_d = 0.0;
           		if (successor_states[i].compare("KLN") == 0 || successor_states[i].compare("KLA") == 0 || successor_states[i].compare("KLD") == 0) {
                   	if (successor_states[i].compare("KLD") == 0) {
                   		tmp_ref_vel -= 0.224;
@@ -530,9 +532,11 @@ int main() {
                   	vector<double> tmp_next_y_vals;
 		          	get_trajectory(car_x, car_y, car_yaw, car_s, previous_path_x, previous_path_y, map_waypoints_s, map_waypoints_x, map_waypoints_y, tmp_lane, tmp_ref_vel, car_next_x_vals, car_next_y_vals);
 					if (front_car_id >= 0) {
-						car_vx = sensor_fusion[front_car_id][3];
-						car_vy = sensor_fusion[front_car_id][4];
-						get_prediction(car_vx, car_vy, car_s, car_d, map_waypoints_s, map_waypoints_x, map_waypoints_y, tmp_next_x_vals, tmp_next_y_vals);
+						tmp_car_vx = sensor_fusion[front_car_id][3];
+						tmp_car_vy = sensor_fusion[front_car_id][4];
+						tmp_car_s = sensor_fusion[front_car_id][5];
+						tmp_car_d = sensor_fusion[front_car_id][6];
+						get_prediction(tmp_car_vx, tmp_car_vy, tmp_car_s, tmp_car_d, map_waypoints_s, map_waypoints_x, map_waypoints_y, tmp_next_x_vals, tmp_next_y_vals);
 					}
 					cost = get_cost(car_next_x_vals, car_next_y_vals, tmp_next_x_vals, tmp_next_y_vals, tmp_ref_vel);
           		}
@@ -553,9 +557,11 @@ int main() {
           			for (int i = 0; i < side_cars.size(); i++) {
                       	vector<double> tmp_next_x_vals;
                       	vector<double> tmp_next_y_vals;
-						car_vx = sensor_fusion[i][3];
-						car_vy = sensor_fusion[i][4];
-						get_prediction(car_vx, car_vy, car_s, car_d, map_waypoints_s, map_waypoints_x, map_waypoints_y, tmp_next_x_vals, tmp_next_y_vals);
+						tmp_car_vx = sensor_fusion[i][3];
+						tmp_car_vy = sensor_fusion[i][4];
+						tmp_car_s = sensor_fusion[i][5];
+						tmp_car_d = sensor_fusion[i][6];
+						get_prediction(tmp_car_vx, tmp_car_vy, tmp_car_s, tmp_car_d, map_waypoints_s, map_waypoints_x, map_waypoints_y, tmp_next_x_vals, tmp_next_y_vals);
 						cost = get_cost(car_next_x_vals, car_next_y_vals, tmp_next_x_vals, tmp_next_y_vals, tmp_ref_vel);
 						if (cost < lane_change_min_cost) {
 							lane_change_min_cost = cost;
