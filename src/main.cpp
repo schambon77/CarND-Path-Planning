@@ -560,8 +560,8 @@ int main() {
                   	vector<double> car_next_x_vals;
                   	vector<double> car_next_y_vals;
                   	get_trajectory(car_x, car_y, car_yaw, car_s, previous_path_x, previous_path_y, map_waypoints_s, map_waypoints_x, map_waypoints_y, tmp_lane, tmp_ref_vel, car_next_x_vals, car_next_y_vals);
-          			double lane_change_max_cost = 0.0;
           			if (side_cars.size() > 0) {   //if some cars are in side lane
+              			double lane_change_max_cost = 0.0;
 						for (int i = 0; i < side_cars.size(); i++) {
 							vector<double> tmp_next_x_vals;
 							vector<double> tmp_next_y_vals;
@@ -575,13 +575,13 @@ int main() {
 								lane_change_max_cost = cost;
 							}
 						}
+	          			cost = lane_change_max_cost;
           			}
           			else {    //no cars in side lane
 						vector<double> tmp_next_x_vals;
 						vector<double> tmp_next_y_vals;
 						cost = get_cost(car_next_x_vals, car_next_y_vals, tmp_next_x_vals, tmp_next_y_vals, tmp_ref_vel);
           			}
-          			cost = lane_change_max_cost;
           		}
 				if (cost < min_cost) {
 					next_state = successor_states[i];
