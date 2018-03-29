@@ -320,8 +320,10 @@ double get_too_close_cost(const vector<double> &trajectory_x, const vector<doubl
 	double cost = 0.0;
 	double dist = 0.0;
 	double safety_dist = ref_vel * 1.61 * 0.28 * 2.0;   //compute safety distance related to keeping 2 seconds interval from other car
+	cout << "Safety distance: " << safety_dist << endl;
 	for (int i = 0; i < prediction_x.size(); i++) {
 		dist = distance(trajectory_x[i], trajectory_y[i], prediction_x[i], prediction_y[i]);
+		cout << "i: " << i << ", trajectory_x: " << trajectory_x[i] << ", trajectory_y: " << trajectory_y[i] << ", prediction_x: " << prediction_x[i] << ", prediction_y: " << prediction_y[i] << ", dist: " << dist << endl;
 		if (dist < safety_dist) { //avoid trajectories less than 10 meters away from other vehicles
 			cost = (safety_dist - dist)/safety_dist;
 			break;
