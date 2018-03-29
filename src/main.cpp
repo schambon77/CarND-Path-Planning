@@ -313,7 +313,7 @@ double get_collision_cost(const vector<double> &trajectory_x, const vector<doubl
 			break;
 		}
 	}
-	cout << "Collision cost: " << cost << endl;
+	//cout << "Collision cost: " << cost << endl;
 	return cost;
 }
 
@@ -329,7 +329,7 @@ double get_too_close_cost(const vector<double> &trajectory_x, const vector<doubl
 			break;
 		}
 	}
-	cout << "Too close cost: " << cost << endl;
+	//cout << "Too close cost: " << cost << endl;
 	return cost;
 }
 
@@ -342,7 +342,7 @@ double get_efficiency_cost(const double ref_vel) {
 	else {
 		cost = (speed_limit - ref_vel)/speed_limit;
 	}
-	cout << "Efficiency cost: " << cost << endl;
+	//cout << "Efficiency cost: " << cost << endl;
 	return cost;
 }
 
@@ -351,7 +351,7 @@ double get_cost(const vector<double> &trajectory_x, const vector<double> &trajec
 	cost += 100.0 * get_collision_cost(trajectory_x, trajectory_y, prediction_x, prediction_y);
 	cost += 50.0 * get_too_close_cost(trajectory_x, trajectory_y, prediction_x, prediction_y, ref_vel);
 	cost += 1.0 * get_efficiency_cost(ref_vel);
-	cout << "Cost: " << cost << endl;
+	//cout << "Cost: " << cost << endl;
 	return cost;
 }
 
@@ -377,7 +377,8 @@ int get_closest_front_car_in_lane(const vector<vector<double>> sensor_fusion, in
 vector<int> get_closest_cars_in_side_lane(const vector<vector<double>> &sensor_fusion, const int lane, const double car_s, const double ref_vel, bool is_right) {
 	vector<int> ret;
 	double dist_radius = ref_vel * 1.61 * 0.28 * 5.0;   //consider all vehicles within 5 seconds
-  	int lane_of_interest = 0;
+  	cout << "Distance radius: " << dist_radius << endl;
+	int lane_of_interest = 0;
   	if (is_right) {
   		if (lane > 0) {
   			lane_of_interest = lane - 1;
@@ -395,6 +396,7 @@ vector<int> get_closest_cars_in_side_lane(const vector<vector<double>> &sensor_f
   			double dist = abs(check_car_s - car_s);   //approximation, forget about d
   			if (dist < dist_radius) {
   				ret.push_back(i);
+  				cout << "Vehicle " << i << " is in target lane " << lane_of_interest << " within distance " << dist << endl;
   			}
   		}
   	}
