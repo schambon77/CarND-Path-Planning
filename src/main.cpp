@@ -200,7 +200,7 @@ void get_prediction(double car_vx, double car_vy, float car_s, float car_d,
 	for (int i = 0; i < 50; i++) {
 		next_point = getXY(s + i * 0.02 * speed, car_d, map_waypoints_s, map_waypoints_x, map_waypoints_y);  //here we assume other vehicles go at constant speed without changing lanes
 		next_x_vals.push_back(next_point[0]);
-		next_y_vals.push_back(next_point[0]);
+		next_y_vals.push_back(next_point[1]);
 	}
 }
 
