@@ -561,18 +561,25 @@ int main() {
                   	vector<double> car_next_y_vals;
                   	get_trajectory(car_x, car_y, car_yaw, car_s, previous_path_x, previous_path_y, map_waypoints_s, map_waypoints_x, map_waypoints_y, tmp_lane, tmp_ref_vel, car_next_x_vals, car_next_y_vals);
           			double lane_change_max_cost = 0.0;
-          			for (int i = 0; i < side_cars.size(); i++) {
-                      	vector<double> tmp_next_x_vals;
-                      	vector<double> tmp_next_y_vals;
-						tmp_car_vx = sensor_fusion[i][3];
-						tmp_car_vy = sensor_fusion[i][4];
-						tmp_car_s = sensor_fusion[i][5];
-						tmp_car_d = sensor_fusion[i][6];
-						get_prediction(tmp_car_vx, tmp_car_vy, tmp_car_s, tmp_car_d, map_waypoints_s, map_waypoints_x, map_waypoints_y, tmp_next_x_vals, tmp_next_y_vals);
-						cost = get_cost(car_next_x_vals, car_next_y_vals, tmp_next_x_vals, tmp_next_y_vals, tmp_ref_vel);
-						if (cost > lane_change_max_cost) {
-							lane_change_max_cost = cost;
+          			if (side_cars.size() > 0) {   //if some cars are in side lane
+						for (int i = 0; i < side_cars.size(); i++) {
+							vector<double> tmp_next_x_vals;
+							vector<double> tmp_next_y_vals;
+							tmp_car_vx = sensor_fusion[i][3];
+							tmp_car_vy = sensor_fusion[i][4];
+							tmp_car_s = sensor_fusion[i][5];
+							tmp_car_d = sensor_fusion[i][6];
+							get_prediction(tmp_car_vx, tmp_car_vy, tmp_car_s, tmp_car_d, map_waypoints_s, map_waypoints_x, map_waypoints_y, tmp_next_x_vals, tmp_next_y_vals);
+							cost = get_cost(car_next_x_vals, car_next_y_vals, tmp_next_x_vals, tmp_next_y_vals, tmp_ref_vel);
+							if (cost > lane_change_max_cost) {
+								lane_change_max_cost = cost;
+							}
 						}
+          			}
+          			else {    //no cars in side lane
+						vector<double> tmp_next_x_vals;
+						vector<double> tmp_next_y_vals;
+						cost = get_cost(car_next_x_vals, car_next_y_vals, tmp_next_x_vals, tmp_next_y_vals, tmp_ref_vel);
           			}
           			cost = lane_change_max_cost;
           		}
