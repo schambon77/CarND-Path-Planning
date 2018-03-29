@@ -160,7 +160,7 @@ vector<double> getXY(double s, double d, const vector<double> &maps_s, const vec
 
 }
 
-vector<string> get_successor_states(const double ref_vel, const int lane) {
+vector<string> get_successor_states(double ref_vel, int lane, string state) {
 	//KLN: keep lane no change
 	//KLA: keep lane accelerate
 	//KLD: keep lane decelerate
@@ -312,7 +312,7 @@ double get_collision_cost(const vector<double> &trajectory_x, const vector<doubl
 			break;
 		}
 	}
-	//cout << "Collision cost: " << cost << endl;
+	cout << "Collision cost: " << cost << endl;
 	return cost;
 }
 
@@ -327,7 +327,7 @@ double get_too_close_cost(const vector<double> &trajectory_x, const vector<doubl
 			break;
 		}
 	}
-	//cout << "Too close cost: " << cost << endl;
+	cout << "Too close cost: " << cost << endl;
 	return cost;
 }
 
@@ -340,7 +340,7 @@ double get_efficiency_cost(const double ref_vel) {
 	else {
 		cost = (speed_limit - ref_vel)/speed_limit;
 	}
-	//cout << "Efficiency cost: " << cost << endl;
+	cout << "Efficiency cost: " << cost << endl;
 	return cost;
 }
 
@@ -349,7 +349,7 @@ double get_cost(const vector<double> &trajectory_x, const vector<double> &trajec
 	cost += 10.0 * get_collision_cost(trajectory_x, trajectory_y, prediction_x, prediction_y);
 	cost += 5.0 * get_too_close_cost(trajectory_x, trajectory_y, prediction_x, prediction_y, ref_vel);
 	cost += 1.0 * get_efficiency_cost(ref_vel);
-	//cout << "Cost: " << cost << endl;
+	cout << "Cost: " << cost << endl;
 	return cost;
 }
 
@@ -497,7 +497,7 @@ int main() {
           		car_s = end_path_s;
           	}
 
-          	vector<string> successor_states = get_successor_states(ref_vel, lane);
+          	vector<string> successor_states = get_successor_states(ref_vel, lane, state);
 
           	int front_car_id = get_closest_front_car_in_lane(sensor_fusion, lane, car_s);
           	vector<int> right_cars = get_closest_cars_in_side_lane(sensor_fusion, lane, car_s, ref_vel, true);
@@ -509,7 +509,7 @@ int main() {
           	double min_cost_ref_vel = ref_vel;
           	string next_state = "KLN";
           	for (int i = 0; i < successor_states.size(); i++) {
-          		//cout << "Checking potential next state : " << successor_states[i] << endl;
+          		cout << "Checking potential next state : " << successor_states[i] << endl;
       			double tmp_ref_vel = ref_vel;
       			int tmp_lane = lane;
       			double car_vx = 0.0;
