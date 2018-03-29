@@ -368,6 +368,7 @@ int get_closest_front_car_in_lane(const vector<vector<double>> sensor_fusion, in
   			}
   		}
   	}
+  	cout << "Closest car in front: " << ret << " at distance: " << dist_s << endl;
   	return ret;
 }
 
