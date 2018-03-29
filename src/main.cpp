@@ -268,7 +268,7 @@ void get_trajectory(double car_x, double car_y, double car_yaw, double car_s, co
   	tk::spline s;
 
   	for (int i = 0; i < ptsx.size(); i++) {
-  		cout << "Pt: " << i << ", x: " << ptsx[i] << ", y: " << ptsy[i] << endl;
+  		//cout << "Pt: " << i << ", x: " << ptsx[i] << ", y: " << ptsy[i] << endl;
   	}
   	s.set_points(ptsx, ptsy);
 
@@ -314,7 +314,7 @@ double get_collision_cost(const vector<double> &trajectory_x, const vector<doubl
 			break;
 		}
 	}
-	cout << "Collision cost: " << cost << endl;
+	//cout << "Collision cost: " << cost << endl;
 	return cost;
 }
 
@@ -329,7 +329,7 @@ double get_too_close_cost(const vector<double> &trajectory_x, const vector<doubl
 			break;
 		}
 	}
-	cout << "Too close cost: " << cost << endl;
+	//cout << "Too close cost: " << cost << endl;
 	return cost;
 }
 
@@ -342,7 +342,7 @@ double get_efficiency_cost(const double ref_vel) {
 	else {
 		cost = (speed_limit - ref_vel)/speed_limit;
 	}
-	cout << "Efficiency cost: " << cost << endl;
+	//cout << "Efficiency cost: " << cost << endl;
 	return cost;
 }
 
@@ -485,15 +485,15 @@ int main() {
 
           	int prev_size = previous_path_x.size();
 
-          	cout << "Car x: " << car_x << endl;
-          	cout << "Car y: " << car_y << endl;
-          	cout << "Car s: " << car_s << endl;
-          	cout << "Car d: " << car_d << endl;
-          	cout << "Car yaw: " << car_yaw << endl;
-          	cout << "Car speed: " << car_speed << endl;
-          	cout << "Previous path size: " << prev_size << endl;
-          	cout << "End path s: " << end_path_s << endl;
-          	cout << "End path d: " << end_path_d << endl;
+          	//cout << "Car x: " << car_x << endl;
+          	//cout << "Car y: " << car_y << endl;
+          	//cout << "Car s: " << car_s << endl;
+          	//cout << "Car d: " << car_d << endl;
+          	//cout << "Car yaw: " << car_yaw << endl;
+          	//cout << "Car speed: " << car_speed << endl;
+          	//cout << "Previous path size: " << prev_size << endl;
+          	//cout << "End path s: " << end_path_s << endl;
+          	//cout << "End path d: " << end_path_d << endl;
 
           	if (prev_size > 0) {
           		car_s = end_path_s;
@@ -511,7 +511,7 @@ int main() {
           	double min_cost_ref_vel = ref_vel;
           	string next_state = "KLN";
           	for (int i = 0; i < successor_states.size(); i++) {
-          		cout << "Checking potential next state : " << successor_states[i] << endl;
+          		//cout << "Checking potential next state : " << successor_states[i] << endl;
       			double tmp_ref_vel = ref_vel;
       			int tmp_lane = lane;
       			double car_vx = 0.0;
