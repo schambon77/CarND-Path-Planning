@@ -319,7 +319,7 @@ double get_collision_cost(const vector<double> &trajectory_x, const vector<doubl
 double get_too_close_cost(const vector<double> &trajectory_x, const vector<double> &trajectory_y, const vector<double> &prediction_x, const vector<double> &prediction_y, const double ref_vel) {
 	double cost = 0.0;
 	double dist = 0.0;
-	double safety_dist = ref_vel * 1.61 * 2.0;   //compute safety distance related to keeping 2 seconds interval from other car
+	double safety_dist = ref_vel * 1.61 * 0.28 * 2.0;   //compute safety distance related to keeping 2 seconds interval from other car
 	for (int i = 0; i < prediction_x.size(); i++) {
 		dist = distance(trajectory_x[i], trajectory_y[i], prediction_x[i], prediction_y[i]);
 		if (dist < safety_dist) { //avoid trajectories less than 10 meters away from other vehicles
@@ -373,7 +373,7 @@ int get_closest_front_car_in_lane(const vector<vector<double>> sensor_fusion, in
 
 vector<int> get_closest_cars_in_side_lane(const vector<vector<double>> &sensor_fusion, const int lane, const double car_s, const double ref_vel, bool is_right) {
 	vector<int> ret;
-	double dist_radius = ref_vel * 1.61 * 5.0;   //consider all vehicles within 5 seconds
+	double dist_radius = ref_vel * 1.61 * 0.28 * 5.0;   //consider all vehicles within 5 seconds
   	int lane_of_interest = 0;
   	if (is_right) {
   		if (lane > 0) {
