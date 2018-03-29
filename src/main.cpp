@@ -307,7 +307,7 @@ double get_collision_cost(const vector<double> &trajectory_x, const vector<doubl
 	double dist = 0.0;
 	for (int i = 0; i < prediction_x.size(); i++) {
 		dist = distance(trajectory_x[i], trajectory_y[i], prediction_x[i], prediction_y[i]);
-		//cout << "i: " << i << ", trajectory_x: " << trajectory_x[i] << ", trajectory_y: " << trajectory_y[i] << ", prediction_x: " << prediction_x[i] << ", prediction_y: " << prediction_y[i] << ", dist: " << dist << endl;
+		cout << "i: " << i << ", trajectory_x: " << trajectory_x[i] << ", trajectory_y: " << trajectory_y[i] << ", prediction_x: " << prediction_x[i] << ", prediction_y: " << prediction_y[i] << ", dist: " << dist << endl;
 		if (dist < 10.0) { //avoid trajectories less than 10 meters away from other vehicles
 			cost = 1.0;
 			break;
@@ -376,29 +376,34 @@ int get_closest_front_car_in_lane(const vector<vector<double>> sensor_fusion, in
 
 vector<int> get_closest_cars_in_side_lane(const vector<vector<double>> &sensor_fusion, const int lane, const double car_s, const double ref_vel, bool is_right) {
 	vector<int> ret;
-	double dist_radius = ref_vel * 1.61 * 0.28 * 2.0;   //consider all vehicles within 5 seconds
+	double dist_radius = ref_vel * 1.61 * 0.28 * 3.0;   //consider all vehicles within 3 seconds
   	cout << "Distance radius: " << dist_radius << endl;
+  	bool is_within_bounds = false;
 	int lane_of_interest = 0;
   	if (is_right) {
   		if (lane > 0) {
   			lane_of_interest = lane - 1;
+  			is_within_bounds = true;
   		}
   	}
   	else {
   		if (lane < 2) {
   			lane_of_interest = lane + 1;
+  			is_within_bounds = true;
   		}
   	}
-	for (int i = 0; i < sensor_fusion.size(); i++) {
-  		float d = sensor_fusion[i][6];
-  		if (d < (2+4*lane_of_interest+2) && (d> (2+4*lane_of_interest-2))) {  //a car is in lane of interest
-  			double check_car_s = sensor_fusion[i][5];
-  			double dist = abs(check_car_s - car_s);   //approximation, forget about d
-  			if (dist < dist_radius) {
-  				ret.push_back(i);
-  				cout << "Vehicle " << i << " is in target lane " << lane_of_interest << " within distance " << dist << endl;
-  			}
-  		}
+  	if (is_within_bounds) {
+		for (int i = 0; i < sensor_fusion.size(); i++) {
+			float d = sensor_fusion[i][6];
+			if (d < (2+4*lane_of_interest+2) && (d> (2+4*lane_of_interest-2))) {  //a car is in lane of interest
+				double check_car_s = sensor_fusion[i][5];
+				double dist = abs(check_car_s - car_s);   //approximation, forget about d
+				if (dist < dist_radius) {
+					ret.push_back(i);
+					cout << "Vehicle " << i << " is in target lane " << lane_of_interest << " within distance " << dist << endl;
+				}
+			}
+		}
   	}
   	return ret;
 }
