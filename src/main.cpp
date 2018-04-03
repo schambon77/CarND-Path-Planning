@@ -308,12 +308,13 @@ double get_collision_cost(const vector<double> &trajectory_x, const vector<doubl
 	for (int i = 0; i < prediction_x.size(); i++) {
 		dist = distance(trajectory_x[i], trajectory_y[i], prediction_x[i], prediction_y[i]);
 		//cout << "i: " << i << ", trajectory_x: " << trajectory_x[i] << ", trajectory_y: " << trajectory_y[i] << ", prediction_x: " << prediction_x[i] << ", prediction_y: " << prediction_y[i] << ", dist: " << dist << endl;
-		if (dist < 25.0) { //avoid trajectories less than x meters away from other vehicles
+		if (dist < 20.0) { //avoid trajectories less than x meters away from other vehicles
 			cost = 1.0;
+			cout << "WATCH OUT: POTENTIAL COLLISION" << endl;
 			break;
 		}
 	}
-	cout << "Collision cost: " << cost << endl;
+	//cout << "Collision cost: " << cost << endl;
 	return cost;
 }
 
@@ -342,16 +343,16 @@ double get_efficiency_cost(const double ref_vel) {
 	else {
 		cost = (speed_limit - ref_vel)/speed_limit;
 	}
-	cout << "Efficiency cost: " << cost << endl;
+	//cout << "Efficiency cost: " << cost << endl;
 	return cost;
 }
 
 double get_cost(const vector<double> &trajectory_x, const vector<double> &trajectory_y, const vector<double> &prediction_x, const vector<double> &prediction_y, const double ref_vel) {
 	double cost = 0.0;
-	cost += 100.0 * get_collision_cost(trajectory_x, trajectory_y, prediction_x, prediction_y);
+	cost += 10000.0 * get_collision_cost(trajectory_x, trajectory_y, prediction_x, prediction_y);
 	//cost += 50.0 * get_too_close_cost(trajectory_x, trajectory_y, prediction_x, prediction_y, ref_vel);
 	cost += 1.0 * get_efficiency_cost(ref_vel);
-	cout << "Cost: " << cost << endl;
+	//cout << "Cost: " << cost << endl;
 	return cost;
 }
 
@@ -362,7 +363,7 @@ int get_closest_front_car_in_lane(const vector<vector<double>> sensor_fusion, in
   		float d = sensor_fusion[i][6];
   		if (d < (2+4*lane+2) && (d >= (2+4*lane-2))) {  //a car is in lane
   			double check_car_s = sensor_fusion[i][5];
-  			cout << "Car " << i << " is in lane " << lane << "at distance " << check_car_s - car_s << endl;
+  			//cout << "Car " << i << " is in lane " << lane << " at distance " << check_car_s - car_s << endl;
   			if (check_car_s >= car_s) {   //the car is in front
   				if (abs(check_car_s - car_s) < dist_s) {
   					ret = i;
@@ -371,7 +372,7 @@ int get_closest_front_car_in_lane(const vector<vector<double>> sensor_fusion, in
   			}
   		}
   	}
-  	cout << "Closest car in front: " << ret << " at distance: " << dist_s << endl;
+  	//cout << "Closest car in front: " << ret << " at distance: " << dist_s << endl;
   	return ret;
 }
 
@@ -401,7 +402,7 @@ vector<int> get_closest_cars_in_side_lane(const vector<vector<double>> &sensor_f
 				double dist = abs(check_car_s - car_s);   //approximation, forget about d
 				if (dist < dist_radius) {
 					ret.push_back(i);
-					cout << "Vehicle " << i << " is in target lane " << lane_of_interest << " within distance " << dist << endl;
+					//cout << "Vehicle " << i << " is in target lane " << lane_of_interest << " within distance " << dist << endl;
 				}
 			}
 		}
@@ -494,15 +495,15 @@ int main() {
 
           	int prev_size = previous_path_x.size();
 
-          	cout << "Car x: " << car_x << endl;
-          	cout << "Car y: " << car_y << endl;
-          	cout << "Car s: " << car_s << endl;
-          	cout << "Car d: " << car_d << endl;
-          	cout << "Car yaw: " << car_yaw << endl;
-          	cout << "Car speed: " << car_speed << endl;
-          	cout << "Previous path size: " << prev_size << endl;
-          	cout << "End path s: " << end_path_s << endl;
-          	cout << "End path d: " << end_path_d << endl;
+          	//cout << "Car x: " << car_x << endl;
+          	//cout << "Car y: " << car_y << endl;
+          	//cout << "Car s: " << car_s << endl;
+          	//cout << "Car d: " << car_d << endl;
+          	//cout << "Car yaw: " << car_yaw << endl;
+          	//cout << "Car speed: " << car_speed << endl;
+          	//cout << "Previous path size: " << prev_size << endl;
+          	//cout << "End path s: " << end_path_s << endl;
+          	//cout << "End path d: " << end_path_d << endl;
 
           	if (prev_size > 0) {
           		car_s = end_path_s;
@@ -546,6 +547,7 @@ int main() {
 						tmp_car_d = sensor_fusion[front_car_id][6];
 						get_prediction(tmp_car_vx, tmp_car_vy, tmp_car_s, tmp_car_d, map_waypoints_s, map_waypoints_x, map_waypoints_y, tmp_next_x_vals, tmp_next_y_vals);
 					}
+					cout << "Car " << front_car_id << endl;
 					cost = get_cost(car_next_x_vals, car_next_y_vals, tmp_next_x_vals, tmp_next_y_vals, tmp_ref_vel);
           		}
           		else {
@@ -566,11 +568,12 @@ int main() {
 						for (int i = 0; i < side_cars.size(); i++) {
 							vector<double> tmp_next_x_vals;
 							vector<double> tmp_next_y_vals;
-							tmp_car_vx = sensor_fusion[i][3];
-							tmp_car_vy = sensor_fusion[i][4];
-							tmp_car_s = sensor_fusion[i][5];
-							tmp_car_d = sensor_fusion[i][6];
+							tmp_car_vx = sensor_fusion[side_cars[i]][3];
+							tmp_car_vy = sensor_fusion[side_cars[i]][4];
+							tmp_car_s = sensor_fusion[side_cars[i]][5];
+							tmp_car_d = sensor_fusion[side_cars[i]][6];
 							get_prediction(tmp_car_vx, tmp_car_vy, tmp_car_s, tmp_car_d, map_waypoints_s, map_waypoints_x, map_waypoints_y, tmp_next_x_vals, tmp_next_y_vals);
+							cout << "Car " << side_cars[i] << endl;
 							cost = get_cost(car_next_x_vals, car_next_y_vals, tmp_next_x_vals, tmp_next_y_vals, tmp_ref_vel);
 							if (cost > lane_change_max_cost) {
 								lane_change_max_cost = cost;
