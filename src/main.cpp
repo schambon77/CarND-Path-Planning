@@ -307,7 +307,7 @@ double get_collision_cost(const vector<double> &trajectory_x, const vector<doubl
 	double dist = 0.0;
 	for (int i = 0; i < prediction_x.size(); i++) {
 		dist = distance(trajectory_x[i], trajectory_y[i], prediction_x[i], prediction_y[i]);
-		cout << "i: " << i << ", trajectory_x: " << trajectory_x[i] << ", trajectory_y: " << trajectory_y[i] << ", prediction_x: " << prediction_x[i] << ", prediction_y: " << prediction_y[i] << ", dist: " << dist << endl;
+		//cout << "i: " << i << ", trajectory_x: " << trajectory_x[i] << ", trajectory_y: " << trajectory_y[i] << ", prediction_x: " << prediction_x[i] << ", prediction_y: " << prediction_y[i] << ", dist: " << dist << endl;
 		if (dist < 10.0) { //avoid trajectories less than 10 meters away from other vehicles
 			cost = 1.0;
 			break;
@@ -360,8 +360,9 @@ int get_closest_front_car_in_lane(const vector<vector<double>> sensor_fusion, in
 	double dist_s = 999999.0;
   	for (int i = 0; i < sensor_fusion.size(); i++) {
   		float d = sensor_fusion[i][6];
-  		if (d < (2+4*lane+2) && (d> (2+4*lane-2))) {  //a car is in lane
+  		if (d < (2+4*lane+2) && (d >= (2+4*lane-2))) {  //a car is in lane
   			double check_car_s = sensor_fusion[i][5];
+  			cout << "Car " << i << " is in lane " << lane << "at distance " << check_car_s - car_s << endl;
   			if (check_car_s >= car_s) {   //the car is in front
   				if (abs(check_car_s - car_s) < dist_s) {
   					ret = i;
