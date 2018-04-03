@@ -376,13 +376,13 @@ int get_closest_front_car_in_lane(const vector<vector<double>> sensor_fusion, in
   	return ret;
 }
 
-vector<int> get_closest_cars_in_side_lane(const vector<vector<double>> &sensor_fusion, const int lane, const double car_s, const double ref_vel, bool is_right) {
+vector<int> get_closest_cars_in_side_lane(const vector<vector<double>> &sensor_fusion, const int lane, const double car_s, const double ref_vel, bool is_left) {
 	vector<int> ret;
 	double dist_radius = ref_vel * 1.61 * 0.28 * 3.0;   //consider all vehicles within 3 seconds
   	//cout << "Distance radius: " << dist_radius << endl;
   	bool is_within_bounds = false;
 	int lane_of_interest = 0;
-  	if (is_right) {
+  	if (is_left) {
   		if (lane > 0) {
   			lane_of_interest = lane - 1;
   			is_within_bounds = true;
@@ -512,8 +512,8 @@ int main() {
           	vector<string> successor_states = get_successor_states(ref_vel, lane, state);
 
           	int front_car_id = get_closest_front_car_in_lane(sensor_fusion, lane, car_s);
-          	vector<int> right_cars = get_closest_cars_in_side_lane(sensor_fusion, lane, car_s, ref_vel, true);
-          	vector<int> left_cars = get_closest_cars_in_side_lane(sensor_fusion, lane, car_s, ref_vel, false);
+          	vector<int> right_cars = get_closest_cars_in_side_lane(sensor_fusion, lane, car_s, ref_vel, false);
+          	vector<int> left_cars = get_closest_cars_in_side_lane(sensor_fusion, lane, car_s, ref_vel, true);
 
           	double cost = 0.0;
           	double min_cost = 999999.0;
