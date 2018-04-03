@@ -308,7 +308,7 @@ double get_collision_cost(const vector<double> &trajectory_x, const vector<doubl
 	for (int i = 0; i < prediction_x.size(); i++) {
 		dist = distance(trajectory_x[i], trajectory_y[i], prediction_x[i], prediction_y[i]);
 		//cout << "i: " << i << ", trajectory_x: " << trajectory_x[i] << ", trajectory_y: " << trajectory_y[i] << ", prediction_x: " << prediction_x[i] << ", prediction_y: " << prediction_y[i] << ", dist: " << dist << endl;
-		if (dist < 10.0) { //avoid trajectories less than 10 meters away from other vehicles
+		if (dist < 25.0) { //avoid trajectories less than x meters away from other vehicles
 			cost = 1.0;
 			break;
 		}
