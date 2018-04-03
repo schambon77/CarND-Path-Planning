@@ -565,15 +565,15 @@ int main() {
                   	get_trajectory(car_x, car_y, car_yaw, car_s, previous_path_x, previous_path_y, map_waypoints_s, map_waypoints_x, map_waypoints_y, tmp_lane, tmp_ref_vel, car_next_x_vals, car_next_y_vals);
           			if (side_cars.size() > 0) {   //if some cars are in side lane
               			double lane_change_max_cost = 0.0;
-						for (int i = 0; i < side_cars.size(); i++) {
+						for (int j = 0; j < side_cars.size(); j++) {
 							vector<double> tmp_next_x_vals;
 							vector<double> tmp_next_y_vals;
-							tmp_car_vx = sensor_fusion[side_cars[i]][3];
-							tmp_car_vy = sensor_fusion[side_cars[i]][4];
-							tmp_car_s = sensor_fusion[side_cars[i]][5];
-							tmp_car_d = sensor_fusion[side_cars[i]][6];
+							tmp_car_vx = sensor_fusion[side_cars[j]][3];
+							tmp_car_vy = sensor_fusion[side_cars[j]][4];
+							tmp_car_s = sensor_fusion[side_cars[j]][5];
+							tmp_car_d = sensor_fusion[side_cars[j]][6];
 							get_prediction(tmp_car_vx, tmp_car_vy, tmp_car_s, tmp_car_d, map_waypoints_s, map_waypoints_x, map_waypoints_y, tmp_next_x_vals, tmp_next_y_vals);
-							cout << "Car " << side_cars[i] << endl;
+							cout << "Car " << side_cars[j] << endl;
 							cost = get_cost(car_next_x_vals, car_next_y_vals, tmp_next_x_vals, tmp_next_y_vals, tmp_ref_vel);
 							if (cost > lane_change_max_cost) {
 								lane_change_max_cost = cost;
