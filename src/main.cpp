@@ -374,7 +374,7 @@ int get_closest_front_car_in_lane(const vector<vector<double>> sensor_fusion, in
   			}
   		}
   	}
-  	cout << "Closest car in front: " << ret << " at distance: " << dist_s << endl;
+  	cout << "Closest car in front: " << ret << " in lane " << lane << " at distance: " << dist_s << endl;
   	return ret;
 }
 
@@ -604,7 +604,7 @@ int main() {
           	vector<double> next_y_vals;
           	get_trajectory(car_x, car_y, car_yaw, car_s, previous_path_x, previous_path_y, map_waypoints_s, map_waypoints_x, map_waypoints_y, lane, ref_vel, next_x_vals, next_y_vals);
 
-          	//cout << "Next state: " <<  next_state << " in lane: " << lane << " at speed: " << ref_vel << endl;
+          	cout << "Next state: " <<  next_state << " in lane: " << lane << " at speed: " << ref_vel << endl;
 
 //          	bool too_close = false;
 //
