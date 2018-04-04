@@ -355,8 +355,8 @@ double get_efficiency_cost(const double ref_vel) {
 
 double get_cost(const vector<double> &trajectory_x, const vector<double> &trajectory_y, const vector<double> &prediction_x, const vector<double> &prediction_y, const double ref_vel) {
 	double cost = 0.0;
-	cost += 10000.0 * get_collision_cost(trajectory_x, trajectory_y, prediction_x, prediction_y);
-	//cost += 50.0 * get_too_close_cost(trajectory_x, trajectory_y, prediction_x, prediction_y, ref_vel);
+	cost += 100.0 * get_collision_cost(trajectory_x, trajectory_y, prediction_x, prediction_y);
+	cost += 50.0 * get_too_close_cost(trajectory_x, trajectory_y, prediction_x, prediction_y, ref_vel);
 	cost += 1.0 * get_efficiency_cost(ref_vel);
 	//cout << "Cost: " << cost << endl;
 	return cost;
