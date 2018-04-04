@@ -511,13 +511,13 @@ int main() {
           	//cout << "End path s: " << end_path_s << endl;
           	//cout << "End path d: " << end_path_d << endl;
 
-          	//if (prev_size > 0) {
-          	//	car_s = end_path_s;
-          	//}
+          	if (prev_size == 0) {
+          		end_path_s = car_s;
+          	}
 
           	//dump sensor fusion info for debug purposes
           	for (int i = 0; i < sensor_fusion.size(); i++) {
-              	cout << "Car " << i << " at s " << sensor_fusion[i][5] << "and d " << sensor_fusion[i][6] << endl;
+              	//cout << "Car " << i << " at s " << sensor_fusion[i][5] << "and d " << sensor_fusion[i][6] << endl;
           	}
 
           	vector<string> successor_states = get_successor_states(ref_vel, lane, state);
