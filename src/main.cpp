@@ -349,7 +349,7 @@ double get_efficiency_cost(const double ref_vel) {
 	else {
 		cost = (speed_limit - ref_vel)/speed_limit;
 	}
-	//cout << "Efficiency cost: " << cost << endl;
+	cout << "Efficiency cost: " << cost << endl;
 	return cost;
 }
 
