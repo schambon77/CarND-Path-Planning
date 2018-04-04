@@ -523,7 +523,7 @@ int main() {
           	double min_cost_ref_vel = ref_vel;
           	string next_state = "KLN";
           	for (int i = 0; i < successor_states.size(); i++) {
-          		//cout << "Checking potential next state : " << successor_states[i] << endl;
+          		cout << "Checking potential next state : " << successor_states[i] << endl;
       			double tmp_ref_vel = ref_vel;
       			int tmp_lane = lane;
       			double tmp_car_vx = 0.0;
