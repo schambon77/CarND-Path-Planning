@@ -305,13 +305,17 @@ void get_trajectory(double car_x, double car_y, double car_yaw, double car_s, co
 double get_collision_cost(const vector<double> &trajectory_x, const vector<double> &trajectory_y, const vector<double> &prediction_x, const vector<double> &prediction_y) {
 	double cost = 0.0;
 	double dist = 0.0;
+	double dist_zero = 999999.0;
 	for (int i = 0; i < prediction_x.size(); i++) {
 		dist = distance(trajectory_x[i], trajectory_y[i], prediction_x[i], prediction_y[i]);
 		//cout << "i: " << i << ", trajectory_x: " << trajectory_x[i] << ", trajectory_y: " << trajectory_y[i] << ", prediction_x: " << prediction_x[i] << ", prediction_y: " << prediction_y[i] << ", dist: " << dist << endl;
 		//cout << "i: " << i << ", dist: " << dist;
+		if (i == 0) {
+			dist_zero = dist;
+		}
 		if (dist < 20.0) { //avoid trajectories less than x meters away from other vehicles
 			cost = 1.0;
-			cout << "WATCH OUT: POTENTIAL COLLISION" << endl;
+			cout << "WATCH OUT: POTENTIAL COLLISION - dist zero: " << dist_zero << endl;
 			break;
 		}
 	}
