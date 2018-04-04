@@ -204,7 +204,7 @@ void get_prediction(double car_vx, double car_vy, float car_s, float car_d,
 	}
 }
 
-void get_trajectory(double car_x, double car_y, double car_yaw, double car_s, const vector<double> &previous_path_x, const vector<double> &previous_path_y,
+void get_trajectory(double car_x, double car_y, double car_yaw, double end_path_s, const vector<double> &previous_path_x, const vector<double> &previous_path_y,
 		const vector<double> &map_waypoints_s, const vector<double> &map_waypoints_x, const vector<double> &map_waypoints_y, const int lane, const double ref_vel,
 		vector<double> &next_x_vals, vector<double> &next_y_vals) {
 
@@ -243,9 +243,9 @@ void get_trajectory(double car_x, double car_y, double car_yaw, double car_s, co
   		ptsy.push_back(ref_y);
   	}
 
-  	vector<double> next_wp0 = getXY(car_s + 30, (2 + 4*lane), map_waypoints_s, map_waypoints_x, map_waypoints_y);
-  	vector<double> next_wp1 = getXY(car_s + 60, (2 + 4*lane), map_waypoints_s, map_waypoints_x, map_waypoints_y);
-  	vector<double> next_wp2 = getXY(car_s + 90, (2 + 4*lane), map_waypoints_s, map_waypoints_x, map_waypoints_y);
+  	vector<double> next_wp0 = getXY(end_path_s + 30, (2 + 4*lane), map_waypoints_s, map_waypoints_x, map_waypoints_y);
+  	vector<double> next_wp1 = getXY(end_path_s + 60, (2 + 4*lane), map_waypoints_s, map_waypoints_x, map_waypoints_y);
+  	vector<double> next_wp2 = getXY(end_path_s + 90, (2 + 4*lane), map_waypoints_s, map_waypoints_x, map_waypoints_y);
 
   	ptsx.push_back(next_wp0[0]);
   	ptsx.push_back(next_wp1[0]);
@@ -550,7 +550,7 @@ int main() {
                   	vector<double> car_next_y_vals;
                   	vector<double> tmp_next_x_vals;
                   	vector<double> tmp_next_y_vals;
-		          	get_trajectory(car_x, car_y, car_yaw, car_s, previous_path_x, previous_path_y, map_waypoints_s, map_waypoints_x, map_waypoints_y, tmp_lane, tmp_ref_vel, car_next_x_vals, car_next_y_vals);
+		          	get_trajectory(car_x, car_y, car_yaw, end_path_s, previous_path_x, previous_path_y, map_waypoints_s, map_waypoints_x, map_waypoints_y, tmp_lane, tmp_ref_vel, car_next_x_vals, car_next_y_vals);
 					if (front_car_id >= 0) {
 						tmp_car_vx = sensor_fusion[front_car_id][3];
 						tmp_car_vy = sensor_fusion[front_car_id][4];
@@ -573,7 +573,7 @@ int main() {
           			}
                   	vector<double> car_next_x_vals;
                   	vector<double> car_next_y_vals;
-                  	get_trajectory(car_x, car_y, car_yaw, car_s, previous_path_x, previous_path_y, map_waypoints_s, map_waypoints_x, map_waypoints_y, tmp_lane, tmp_ref_vel, car_next_x_vals, car_next_y_vals);
+                  	get_trajectory(car_x, car_y, car_yaw, end_path_s, previous_path_x, previous_path_y, map_waypoints_s, map_waypoints_x, map_waypoints_y, tmp_lane, tmp_ref_vel, car_next_x_vals, car_next_y_vals);
           			if (side_cars.size() > 0) {   //if some cars are in side lane
               			double lane_change_max_cost = 0.0;
 						for (int j = 0; j < side_cars.size(); j++) {
@@ -611,7 +611,7 @@ int main() {
           	ref_vel = min_cost_ref_vel;
           	vector<double> next_x_vals;
           	vector<double> next_y_vals;
-          	get_trajectory(car_x, car_y, car_yaw, car_s, previous_path_x, previous_path_y, map_waypoints_s, map_waypoints_x, map_waypoints_y, lane, ref_vel, next_x_vals, next_y_vals);
+          	get_trajectory(car_x, car_y, car_yaw, end_path_s, previous_path_x, previous_path_y, map_waypoints_s, map_waypoints_x, map_waypoints_y, lane, ref_vel, next_x_vals, next_y_vals);
 
           	cout << "Next state: " <<  next_state << " in lane: " << lane << " at speed: " << ref_vel << endl;
 
