@@ -515,6 +515,11 @@ int main() {
           		car_s = end_path_s;
           	}
 
+          	//dump sensor fusion info for debug purposes
+          	for (int i = 0; i < sensor_fusion.size(); i++) {
+              	cout << "Car " << i << " at s " << sensor_fusion[i][5] << "and d " << sensor_fusion[i][6] << endl;
+          	}
+
           	vector<string> successor_states = get_successor_states(ref_vel, lane, state);
 
           	int front_car_id = get_closest_front_car_in_lane(sensor_fusion, lane, car_s);
