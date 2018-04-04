@@ -523,7 +523,7 @@ int main() {
           	double min_cost_ref_vel = ref_vel;
           	string next_state = "KLN";
           	for (int i = 0; i < successor_states.size(); i++) {
-          		cout << "Checking potential next state : " << successor_states[i] << endl;
+          		//cout << "Checking potential next state : " << successor_states[i] << endl;
       			double tmp_ref_vel = ref_vel;
       			int tmp_lane = lane;
       			double tmp_car_vx = 0.0;
@@ -549,7 +549,7 @@ int main() {
 						tmp_car_d = sensor_fusion[front_car_id][6];
 						get_prediction(tmp_car_vx, tmp_car_vy, tmp_car_s, tmp_car_d, map_waypoints_s, map_waypoints_x, map_waypoints_y, tmp_next_x_vals, tmp_next_y_vals);
 					}
-					cout << "Car " << front_car_id << endl;
+					//cout << "Car " << front_car_id << endl;
 					cost = get_cost(car_next_x_vals, car_next_y_vals, tmp_next_x_vals, tmp_next_y_vals, tmp_ref_vel);
           		}
           		else {
@@ -575,7 +575,7 @@ int main() {
 							tmp_car_s = sensor_fusion[side_cars[j]][5];
 							tmp_car_d = sensor_fusion[side_cars[j]][6];
 							get_prediction(tmp_car_vx, tmp_car_vy, tmp_car_s, tmp_car_d, map_waypoints_s, map_waypoints_x, map_waypoints_y, tmp_next_x_vals, tmp_next_y_vals);
-							cout << "Car " << side_cars[j] << endl;
+							//cout << "Car " << side_cars[j] << endl;
 							cost = get_cost(car_next_x_vals, car_next_y_vals, tmp_next_x_vals, tmp_next_y_vals, tmp_ref_vel);
 							if (cost > lane_change_max_cost) {
 								lane_change_max_cost = cost;
@@ -604,7 +604,7 @@ int main() {
           	vector<double> next_y_vals;
           	get_trajectory(car_x, car_y, car_yaw, car_s, previous_path_x, previous_path_y, map_waypoints_s, map_waypoints_x, map_waypoints_y, lane, ref_vel, next_x_vals, next_y_vals);
 
-          	cout << "Next state: " <<  next_state << " in lane: " << lane << " at speed: " << ref_vel << endl;
+          	//cout << "Next state: " <<  next_state << " in lane: " << lane << " at speed: " << ref_vel << endl;
 
 //          	bool too_close = false;
 //
