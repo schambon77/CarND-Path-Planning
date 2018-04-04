@@ -511,9 +511,9 @@ int main() {
           	//cout << "End path s: " << end_path_s << endl;
           	//cout << "End path d: " << end_path_d << endl;
 
-          	if (prev_size > 0) {
-          		car_s = end_path_s;
-          	}
+          	//if (prev_size > 0) {
+          	//	car_s = end_path_s;
+          	//}
 
           	//dump sensor fusion info for debug purposes
           	for (int i = 0; i < sensor_fusion.size(); i++) {
