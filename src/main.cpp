@@ -369,6 +369,7 @@ double get_acceleration_cost(const vector<double> &trajectory_x, const vector<do
 		acc_inst = abs(prev_vel - vel) / 0.02;
 		accs_inst.push_back(acc_inst);
 		acc_sum += acc_inst;
+		cout << "dist " << dist << " prev vel " << prev_vel << " vel " << vel << " acc inst" << acc_inst << " acc avg " << acc_avg << endl;
 		if (count >= 10) {   // 10 * 0.02 second = 0.2 second
 			acc_avg = (double)(acc_sum / count);
 			if (acc_avg > 10.0) {
