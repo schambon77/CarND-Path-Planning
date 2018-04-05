@@ -313,7 +313,7 @@ double get_collision_cost(const vector<double> &trajectory_x, const vector<doubl
 		if (i == 0) {
 			dist_zero = dist;
 		}
-		if (dist < 20.0) { //avoid trajectories less than x meters away from other vehicles
+		if (dist < 10.0) { //avoid trajectories less than x meters away from other vehicles
 			cost = 1.0;
 			cout << "WATCH OUT: POTENTIAL COLLISION - dist zero: " << dist_zero << endl;
 			break;
@@ -353,10 +353,28 @@ double get_efficiency_cost(const double ref_vel) {
 	return cost;
 }
 
+double get_acceleration_cost(const vector<double> &trajectory_x, const vector<double> &trajectory_y, const double ref_vel) {
+	double cost = 0.0;
+	double dist = 0.0;
+	double prev_vel = ref_vel;
+	double vel = 0.0;
+	for (int i = 0; i < trajectory_x.size() - 1; i++) {
+		dist = distance(trajectory_x[i], trajectory_y[i],trajectory_x[i+1], trajectory_y[i+1]);
+		vel = dist / 0.02;
+		if ((abs(pre_vel - vel) / 0.02) > 10.0) {
+			cost = 1.0;
+		}
+		prev_vel = vel;
+	}
+	cout << "Acceleration cost: " << cost << endl;
+	return cost;
+}
+
 double get_cost(const vector<double> &trajectory_x, const vector<double> &trajectory_y, const vector<double> &prediction_x, const vector<double> &prediction_y, const double ref_vel) {
 	double cost = 0.0;
 	cost += 100.0 * get_collision_cost(trajectory_x, trajectory_y, prediction_x, prediction_y);
 	cost += 50.0 * get_too_close_cost(trajectory_x, trajectory_y, prediction_x, prediction_y, ref_vel);
+	cost += 20.0 * get_acceleration_cost(trajectory_x, trajectory_y, ref_vel);
 	cost += 1.0 * get_efficiency_cost(ref_vel);
 	//cout << "Cost: " << cost << endl;
 	return cost;
