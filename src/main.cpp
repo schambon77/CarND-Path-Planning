@@ -315,12 +315,12 @@ double get_collision_cost(const vector<double> &trajectory_x, const vector<doubl
 		}
 		if (dist < 10.0) { //avoid trajectories less than x meters away from other vehicles
 			cost = 1.0;
-			cout << "WATCH OUT: POTENTIAL COLLISION - dist zero: " << dist_zero << endl;
+			//cout << "WATCH OUT: POTENTIAL COLLISION - dist zero: " << dist_zero << endl;
 			break;
 		}
 	}
 	//cout << endl;
-	//cout << "Collision cost: " << cost << endl;
+	cout << "Collision cost: " << cost << endl;
 	return cost;
 }
 
@@ -358,14 +358,27 @@ double get_acceleration_cost(const vector<double> &trajectory_x, const vector<do
 	double dist = 0.0;
 	double prev_vel = 0.0;
 	double vel = 0.0;
-	double acc = 0.0;
+	double acc_inst = 0.0;
+	double acc_sum = 0.0;
+	double acc_avg = 0.0;
+	int count = 0;
+	vector<double> accs_inst;
 	for (int i = 0; i < trajectory_x.size() - 1; i++) {
 		dist = distance(trajectory_x[i], trajectory_y[i],trajectory_x[i+1], trajectory_y[i+1]);
 		vel = dist / 0.02;
-		acc = abs(prev_vel - vel) / 0.02;
-		//cout << "Dist: " << dist << ", prev vel: " << prev_vel << ", vel: " << vel << ", acc: " << acc << endl;
-		if (i != 0 && acc > 10.0) {
-			cost = 1.0;
+		acc_inst = abs(prev_vel - vel) / 0.02;
+		accs_inst.push_back(acc_inst);
+		acc_sum += acc_inst;
+		if (count >= 10) {   // 10 * 0.02 second = 0.2 second
+			acc_avg = (double)(acc_sum / count);
+			if (acc__avg > 10.0) {
+				cost = 1.0;
+			}
+			acc_sum -= accs_inst[0];
+			accs_inst.erase(0);
+		}
+		else {
+			count += 1;
 		}
 		prev_vel = vel;
 	}
@@ -379,7 +392,7 @@ double get_cost(const vector<double> &trajectory_x, const vector<double> &trajec
 	cost += 50.0 * get_too_close_cost(trajectory_x, trajectory_y, prediction_x, prediction_y, ref_vel);
 	cost += 20.0 * get_acceleration_cost(trajectory_x, trajectory_y, ref_vel);
 	cost += 1.0 * get_efficiency_cost(ref_vel);
-	//cout << "Cost: " << cost << endl;
+	cout << "Total cost: " << cost << endl;
 	return cost;
 }
 
@@ -399,7 +412,7 @@ int get_closest_front_car_in_lane(const vector<vector<double>> sensor_fusion, in
   			}
   		}
   	}
-  	cout << "Closest car in front: " << ret << " in lane " << lane << " at distance: " << dist_s << endl;
+  	//cout << "Closest car in front: " << ret << " in lane " << lane << " at distance: " << dist_s << endl;
   	return ret;
 }
 
