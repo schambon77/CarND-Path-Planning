@@ -371,11 +371,11 @@ double get_acceleration_cost(const vector<double> &trajectory_x, const vector<do
 		acc_sum += acc_inst;
 		if (count >= 10) {   // 10 * 0.02 second = 0.2 second
 			acc_avg = (double)(acc_sum / count);
-			if (acc__avg > 10.0) {
+			if (acc_avg > 10.0) {
 				cost = 1.0;
 			}
 			acc_sum -= accs_inst[0];
-			accs_inst.erase(0);
+			accs_inst.erase(accs_inst.begin());
 		}
 		else {
 			count += 1;
