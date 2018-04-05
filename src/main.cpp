@@ -327,7 +327,7 @@ double get_collision_cost(const vector<double> &trajectory_x, const vector<doubl
 double get_too_close_cost(const vector<double> &trajectory_x, const vector<double> &trajectory_y, const vector<double> &prediction_x, const vector<double> &prediction_y, const double ref_vel) {
 	double cost = 0.0;
 	double dist = 0.0;
-	double safety_dist = ref_vel * 1.61 * 0.28 * 1.0;   //compute safety distance related to keeping x seconds interval from other car
+	double safety_dist = ref_vel * 1.61 * 0.28 * 1.5;   //compute safety distance related to keeping x seconds interval from other car
 	//cout << "Safety distance: " << safety_dist << endl;
 	for (int i = 0; i < prediction_x.size(); i++) {
 		dist = distance(trajectory_x[i], trajectory_y[i], prediction_x[i], prediction_y[i]);
