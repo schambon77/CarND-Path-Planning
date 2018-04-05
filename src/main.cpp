@@ -366,12 +366,12 @@ double get_acceleration_cost(const vector<double> &trajectory_x, const vector<do
 	for (int i = 0; i < trajectory_x.size() - 1; i++) {
 		dist = distance(trajectory_x[i], trajectory_y[i],trajectory_x[i+1], trajectory_y[i+1]);
 		vel = dist / 0.02;
-		acc_inst = abs(prev_vel - vel) / 0.02;
+		acc_inst = (vel - prev_vel) / 0.02;
 		accs_inst.push_back(acc_inst);
 		acc_sum += acc_inst;
 		cout << "dist " << dist << " prev vel " << prev_vel << " vel " << vel << " acc inst" << acc_inst << " acc avg " << acc_avg << endl;
-		if (count >= 10) {   // 10 * 0.02 second = 0.2 second
-			acc_avg = (double)(acc_sum / count);
+		if (count >= 9) {   // 10 * 0.02 second = 0.2 second
+			acc_avg = acc_sum / 10.0;
 			if (acc_avg > 10.0) {
 				cost = 1.0;
 			}
