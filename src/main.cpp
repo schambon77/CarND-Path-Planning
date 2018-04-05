@@ -362,8 +362,10 @@ double get_acceleration_cost(const vector<double> &trajectory_x, const vector<do
 	double acc_sum = 0.0;
 	double acc_avg = 0.0;
 	int count = 0;
+	int number_ts_for_avg = 10;
+	double max_acc_avg = 8.0;   //safety margin compared to hard limit
 	vector<double> accs_inst;
-	for (int i = 0; i < trajectory_x.size() - 1; i++) {
+	for (int i = 0; i < trajectory_x.size() - number_ts_for_avg; i++) {
 		dist = distance(trajectory_x[i], trajectory_y[i],trajectory_x[i+1], trajectory_y[i+1]);
 		vel = dist / 0.02;
 		if (i > 0) {    //discard first computation of instantaneous acceleration
@@ -371,9 +373,9 @@ double get_acceleration_cost(const vector<double> &trajectory_x, const vector<do
 			accs_inst.push_back(acc_inst);
 			acc_sum += acc_inst;
 			//cout << "dist " << dist << " prev vel " << prev_vel << " vel " << vel << " acc inst " << acc_inst << " acc avg " << acc_avg << endl;
-			if (count >= 9) {   // 10 * 0.02 second = 0.2 second
-				acc_avg = acc_sum / 10.0;
-				if (acc_avg > 10.0) {
+			if (count >= (number_ts_for_avg - 1)) {   // 10 * 0.02 second = 0.2 second
+				acc_avg = acc_sum / number_ts_for_avg;
+				if (acc_avg > max_acc_avg) {  //safety margin compared to hard limit
 					cost = 1.0;
 				}
 				acc_sum -= accs_inst[0];
