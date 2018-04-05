@@ -358,10 +358,13 @@ double get_acceleration_cost(const vector<double> &trajectory_x, const vector<do
 	double dist = 0.0;
 	double prev_vel = ref_vel;
 	double vel = 0.0;
+	double acc = 0.0;
 	for (int i = 0; i < trajectory_x.size() - 1; i++) {
 		dist = distance(trajectory_x[i], trajectory_y[i],trajectory_x[i+1], trajectory_y[i+1]);
 		vel = dist / 0.02;
-		if ((abs(prev_vel - vel) / 0.02) > 10.0) {
+		acc = abs(prev_vel - vel) / 0.02;
+		cout << "Dist: " << dist << ", prev vel: " << prev_vel << ", vel: " << vel << ", acc: " << acc << endl;
+		if (acc > 10.0) {
 			cost = 1.0;
 		}
 		prev_vel = vel;
