@@ -160,34 +160,27 @@ vector<double> getXY(double s, double d, const vector<double> &maps_s, const vec
 
 }
 
-vector<string> get_successor_states(double ref_vel, int lane, string state) {
+vector<string> get_successor_states(double ref_vel, int lane) {
 	//KLN: keep lane no change
 	//KLA: keep lane accelerate
 	//KLD: keep lane decelerate
 	//LCL: lane change left
 	//LCR: lane change right
     vector<string> states;
-    states.push_back("KLN");
-    if (ref_vel < 49.5) {
+    states.push_back("KLN");  //keep lane no change is always possible
+    if (ref_vel < 49.5) {  // keep lane accelerate state is possible only is below the speed limit
         states.push_back("KLA");
     }
-    if (ref_vel > 0) {
+    if (ref_vel > 0) {  // keep lane decelerate only possible if ref velocity is not 0
     	states.push_back("KLD");
     }
-    if (lane > 0) {
+    if (lane > 0) {   // lane change left is possible is left lane available
     	states.push_back("LCL");
     }
-    if (lane < 2) {
+    if (lane < 2) {   // lane change right is possible is right lane available
     	states.push_back("LCR");
     }
     return states;
-}
-
-double get_simple_prediction(double s, double vx, double vy, int number_timesteps) {
-	double speed = sqrt(vx*vx + vy*vy);
-	double predicted_s = s;
-	predicted_s += ((double)number_timesteps*0.02*speed);
-	return predicted_s;
 }
 
 void get_prediction(double car_vx, double car_vy, float car_s, float car_d,
@@ -308,7 +301,7 @@ double get_collision_cost(const vector<double> &trajectory_x, const vector<doubl
 		if (i == 0) {
 			dist_zero = dist;
 		}
-		if (dist < 10.0) { //avoid trajectories less than x meters away from other vehicles
+		if (dist < 10.0) { //avoid trajectories less than 10 meters away from other vehicles
 			cost = 1.0;
 			break;
 		}
@@ -320,7 +313,7 @@ double get_collision_cost(const vector<double> &trajectory_x, const vector<doubl
 double get_too_close_cost(const vector<double> &trajectory_x, const vector<double> &trajectory_y, const vector<double> &prediction_x, const vector<double> &prediction_y, const double ref_vel) {
 	double cost = 0.0;
 	double dist = 0.0;
-	double safety_dist = ref_vel * 1.61 * 0.28 * 1.5;   //compute safety distance related to keeping x seconds interval from other car
+	double safety_dist = ref_vel * 1.61 * 0.28 * 1.5;   //compute safety distance related to keeping 1.5 seconds interval from other car
 	for (int i = 0; i < prediction_x.size(); i++) {
 		dist = distance(trajectory_x[i], trajectory_y[i], prediction_x[i], prediction_y[i]);
 		if (dist < safety_dist) { //avoid trajectories less than 10 meters away from other vehicles
@@ -481,9 +474,8 @@ int main() {
 
   int lane = 1;  //lane id
   double ref_vel = 0.0;  //mph
-  string state = "KL";
 
-  h.onMessage([&ref_vel, &map_waypoints_x,&map_waypoints_y,&map_waypoints_s,&map_waypoints_dx,&map_waypoints_dy, &lane, &state](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length,
+  h.onMessage([&ref_vel, &map_waypoints_x,&map_waypoints_y,&map_waypoints_s,&map_waypoints_dx,&map_waypoints_dy, &lane](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length,
                      uWS::OpCode opCode) {
     // "42" at the start of the message means there's a websocket message event.
     // The 4 signifies a websocket message
@@ -531,7 +523,7 @@ int main() {
           		end_path_s = car_s;
           	}
 
-          	vector<string> successor_states = get_successor_states(ref_vel, lane, state);
+          	vector<string> successor_states = get_successor_states(ref_vel, lane);
 
           	int front_car_id = get_closest_front_car_in_lane(sensor_fusion, lane, car_s);
           	vector<int> right_cars = get_closest_cars_in_side_lane(sensor_fusion, lane, car_s, ref_vel, false);
