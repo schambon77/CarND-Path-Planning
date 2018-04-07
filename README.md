@@ -25,6 +25,8 @@ The car is able to drive at least 4.32 miles without incident.
 
 The car drives according to the speed limit.
 
+![Full lap][image3]
+
 Max Acceleration and Jerk are not Exceeded.
 
 Car does not have collisions.
@@ -37,11 +39,30 @@ The car is able to change lanes
 
 ### Reflection
 
+#### Introduction
+
+Start from code provided in walkthrough
+
+Add finite state machine, other vehicle predictions, and cost functions
+
+#### Finite State Machine
+
+#### Planned Trajectory and Other Vehicle Predictions 
+
+#### Cost Optimization
+
+
+
+
+
+
+
 There is a reflection on how to generate paths.
 
 The code model for generating paths is described in detail. This can be part of the README or a separate doc labeled "Model Documentation".
 
 [//]: # (Image References)
 
-[image1]: ./overall.jpg "Overall result"
-[image2]: ./change_lane.jpg "Change lane"
+[image1]: ./overall.JPG "Overall result"
+[image2]: ./change_lane.JPG "Change lane"
+[image3]: ./full_lap.JPG "Full lap"
