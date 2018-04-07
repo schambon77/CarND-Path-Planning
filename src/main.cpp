@@ -394,9 +394,9 @@ double get_acceleration_cost(const vector<double> &trajectory_x, const vector<do
 double get_cost(const vector<double> &trajectory_x, const vector<double> &trajectory_y, const vector<double> &prediction_x, const vector<double> &prediction_y, const double ref_vel) {
 	double cost = 0.0;
 	cost += 100.0 * get_collision_cost(trajectory_x, trajectory_y, prediction_x, prediction_y);
-	cost += 50.0 * get_too_close_cost(trajectory_x, trajectory_y, prediction_x, prediction_y, ref_vel);
-	cost += 20.0 * get_acceleration_cost(trajectory_x, trajectory_y, ref_vel);
-	cost += 1.0 * get_efficiency_cost(ref_vel);
+	cost += 20.0 * get_too_close_cost(trajectory_x, trajectory_y, prediction_x, prediction_y, ref_vel);
+	cost += 50.0 * get_acceleration_cost(trajectory_x, trajectory_y, ref_vel);
+	cost += 30.0 * get_efficiency_cost(ref_vel);
 	cout << "Total cost: " << cost << endl;
 	return cost;
 }
