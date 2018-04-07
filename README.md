@@ -43,5 +43,5 @@ The code model for generating paths is described in detail. This can be part of 
 
 [//]: # (Image References)
 
-[image1]: ./overall.jpg
-[image2]: ./change_lane.jpg
+[image1]: ./overall.jpg "Overall result"
+[image2]: ./change_lane.jpg "Change lane"
