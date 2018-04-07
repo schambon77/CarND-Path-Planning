@@ -265,9 +265,6 @@ void get_trajectory(double car_x, double car_y, double car_yaw, double end_path_
 
   	tk::spline s;
 
-  	for (int i = 0; i < ptsx.size(); i++) {
-  		//cout << "Pt: " << i << ", x: " << ptsx[i] << ", y: " << ptsy[i] << endl;
-  	}
   	s.set_points(ptsx, ptsy);
 
   	for (int i = 0; i < prev_size; i++) {
@@ -308,18 +305,14 @@ double get_collision_cost(const vector<double> &trajectory_x, const vector<doubl
 	double dist_zero = 999999.0;
 	for (int i = 0; i < prediction_x.size(); i++) {
 		dist = distance(trajectory_x[i], trajectory_y[i], prediction_x[i], prediction_y[i]);
-		//cout << "i: " << i << ", trajectory_x: " << trajectory_x[i] << ", trajectory_y: " << trajectory_y[i] << ", prediction_x: " << prediction_x[i] << ", prediction_y: " << prediction_y[i] << ", dist: " << dist << endl;
-		//cout << "i: " << i << ", dist: " << dist;
 		if (i == 0) {
 			dist_zero = dist;
 		}
 		if (dist < 10.0) { //avoid trajectories less than x meters away from other vehicles
 			cost = 1.0;
-			//cout << "WATCH OUT: POTENTIAL COLLISION - dist zero: " << dist_zero << endl;
 			break;
 		}
 	}
-	//cout << endl;
 	cout << "Collision cost: " << cost << endl;
 	return cost;
 }
@@ -328,7 +321,6 @@ double get_too_close_cost(const vector<double> &trajectory_x, const vector<doubl
 	double cost = 0.0;
 	double dist = 0.0;
 	double safety_dist = ref_vel * 1.61 * 0.28 * 1.5;   //compute safety distance related to keeping x seconds interval from other car
-	//cout << "Safety distance: " << safety_dist << endl;
 	for (int i = 0; i < prediction_x.size(); i++) {
 		dist = distance(trajectory_x[i], trajectory_y[i], prediction_x[i], prediction_y[i]);
 		if (dist < safety_dist) { //avoid trajectories less than 10 meters away from other vehicles
@@ -372,7 +364,6 @@ double get_acceleration_cost(const vector<double> &trajectory_x, const vector<do
 			acc_inst = (vel - prev_vel) / 0.02;
 			accs_inst.push_back(acc_inst);
 			acc_sum += acc_inst;
-			//cout << "dist " << dist << " prev vel " << prev_vel << " vel " << vel << " acc inst " << acc_inst << " acc avg " << acc_avg << endl;
 			if (count >= (number_ts_for_avg - 1)) {   // 10 * 0.02 second = 0.2 second
 				acc_avg = acc_sum / number_ts_for_avg;
 				if (acc_avg > max_acc_avg) {  //safety margin compared to hard limit
@@ -408,7 +399,6 @@ int get_closest_front_car_in_lane(const vector<vector<double>> sensor_fusion, in
   		float d = sensor_fusion[i][6];
   		if (d < (2+4*lane+2) && (d >= (2+4*lane-2))) {  //a car is in lane
   			double check_car_s = sensor_fusion[i][5];
-  			//cout << "Car " << i << " is in lane " << lane << " at distance " << check_car_s - car_s << endl;
   			if (check_car_s >= car_s) {   //the car is in front
   				if (abs(check_car_s - car_s) < dist_s) {
   					ret = i;
@@ -417,14 +407,12 @@ int get_closest_front_car_in_lane(const vector<vector<double>> sensor_fusion, in
   			}
   		}
   	}
-  	//cout << "Closest car in front: " << ret << " in lane " << lane << " at distance: " << dist_s << endl;
   	return ret;
 }
 
 vector<int> get_closest_cars_in_side_lane(const vector<vector<double>> &sensor_fusion, const int lane, const double car_s, const double ref_vel, bool is_left) {
 	vector<int> ret;
 	double dist_radius = ref_vel * 1.61 * 0.28 * 3.0;   //consider all vehicles within 3 seconds
-  	//cout << "Distance radius: " << dist_radius << endl;
   	bool is_within_bounds = false;
 	int lane_of_interest = 0;
   	if (is_left) {
@@ -447,7 +435,6 @@ vector<int> get_closest_cars_in_side_lane(const vector<vector<double>> &sensor_f
 				double dist = abs(check_car_s - car_s);   //approximation, forget about d
 				if (dist < dist_radius) {
 					ret.push_back(i);
-					//cout << "Vehicle " << i << " is in target lane " << lane_of_interest << " within distance " << dist << endl;
 				}
 			}
 		}
@@ -540,23 +527,8 @@ int main() {
 
           	int prev_size = previous_path_x.size();
 
-          	//cout << "Car x: " << car_x << endl;
-          	//cout << "Car y: " << car_y << endl;
-          	//cout << "Car s: " << car_s << endl;
-          	//cout << "Car d: " << car_d << endl;
-          	//cout << "Car yaw: " << car_yaw << endl;
-          	//cout << "Car speed: " << car_speed << endl;
-          	//cout << "Previous path size: " << prev_size << endl;
-          	//cout << "End path s: " << end_path_s << endl;
-          	//cout << "End path d: " << end_path_d << endl;
-
           	if (prev_size == 0) {
           		end_path_s = car_s;
-          	}
-
-          	//dump sensor fusion info for debug purposes
-          	for (int i = 0; i < sensor_fusion.size(); i++) {
-              	//cout << "Car " << i << " at s " << sensor_fusion[i][5] << "and d " << sensor_fusion[i][6] << endl;
           	}
 
           	vector<string> successor_states = get_successor_states(ref_vel, lane, state);
@@ -597,7 +569,6 @@ int main() {
 						tmp_car_d = sensor_fusion[front_car_id][6];
 						get_prediction(tmp_car_vx, tmp_car_vy, tmp_car_s, tmp_car_d, map_waypoints_s, map_waypoints_x, map_waypoints_y, tmp_next_x_vals, tmp_next_y_vals);
 					}
-					//cout << "Car " << front_car_id << endl;
 					cost = get_cost(car_next_x_vals, car_next_y_vals, tmp_next_x_vals, tmp_next_y_vals, tmp_ref_vel);
           		}
           		else {
@@ -623,7 +594,6 @@ int main() {
 							tmp_car_s = sensor_fusion[side_cars[j]][5];
 							tmp_car_d = sensor_fusion[side_cars[j]][6];
 							get_prediction(tmp_car_vx, tmp_car_vy, tmp_car_s, tmp_car_d, map_waypoints_s, map_waypoints_x, map_waypoints_y, tmp_next_x_vals, tmp_next_y_vals);
-							//cout << "Car " << side_cars[j] << endl;
 							cost = get_cost(car_next_x_vals, car_next_y_vals, tmp_next_x_vals, tmp_next_y_vals, tmp_ref_vel);
 							if (cost > lane_change_max_cost) {
 								lane_change_max_cost = cost;
@@ -653,128 +623,6 @@ int main() {
           	get_trajectory(car_x, car_y, car_yaw, end_path_s, previous_path_x, previous_path_y, map_waypoints_s, map_waypoints_x, map_waypoints_y, lane, ref_vel, next_x_vals, next_y_vals);
 
           	cout << "Next state: " <<  next_state << " in lane: " << lane << " at speed: " << ref_vel << endl;
-
-//          	bool too_close = false;
-//
-//          	for (int i = 0; i < sensor_fusion.size(); i++) {
-//          		float d = sensor_fusion[i][6];
-//          		if (d < (2+4*lane+2) && (d> (2+4*lane-2))) {  //a car is in lane
-//          			double vx = sensor_fusion[i][3];
-//          			double vy = sensor_fusion[i][4];
-//          			double check_car_s = sensor_fusion[i][5];
-//          			check_car_s = get_simple_prediction(check_car_s, vx, vy, prev_size);
-//
-//          			if ((check_car_s > car_s) && (check_car_s - car_s) < 30) {
-//          				too_close = true;
-//
-//          				if (lane > 0) {
-//          					lane = 0;
-//          				}
-//          			}
-//          		}
-//          	}
-//
-//          	if (too_close) {
-//          		ref_vel -= 0.224;
-//          	}
-//          	else if (ref_vel < 49.5) {
-//          		ref_vel += 0.224;
-//          	}
-//
-//          	get_trajectory(car_x, car_y, car_yaw, car_s, previous_path_x, previous_path_y, map_waypoints_s, map_waypoints_x, map_waypoints_y, lane, ref_vel, next_x_vals, next_y_vals);
-
-//          	//sparse vector x, y points
-//          	vector<double> ptsx;
-//          	vector<double> ptsy;
-//
-//          	double ref_x = car_x;
-//          	double ref_y = car_y;
-//          	double ref_yaw = deg2rad(car_yaw);
-//
-//          	if (prev_size < 2) {
-//          		double prev_car_x = car_x - cos(car_yaw);  //TODO: check if it should be ref_yaw here
-//          		double prev_car_y = car_y - sin(car_yaw);  //TODO: check if it should be ref_yaw here
-//
-//          		ptsx.push_back(prev_car_x);
-//          		ptsx.push_back(car_x);
-//
-//          		ptsy.push_back(prev_car_y);
-//          		ptsy.push_back(car_y);
-//          	}
-//          	else {
-//          		ref_x = previous_path_x[prev_size - 1];
-//          		ref_y = previous_path_y[prev_size - 1];
-//
-//          		double ref_x_prev = previous_path_x[prev_size - 2];
-//          		double ref_y_prev = previous_path_y[prev_size - 2];
-//          		ref_yaw = atan2(ref_y - ref_y_prev, ref_x - ref_x_prev);
-//
-//          		ptsx.push_back(ref_x_prev);
-//          		ptsx.push_back(ref_x);
-//
-//          		ptsy.push_back(ref_y_prev);
-//          		ptsy.push_back(ref_y);
-//          	}
-//
-//          	vector<double> next_wp0 = getXY(car_s + 30, (2 + 4*lane), map_waypoints_s, map_waypoints_x, map_waypoints_y);
-//          	vector<double> next_wp1 = getXY(car_s + 60, (2 + 4*lane), map_waypoints_s, map_waypoints_x, map_waypoints_y);
-//          	vector<double> next_wp2 = getXY(car_s + 90, (2 + 4*lane), map_waypoints_s, map_waypoints_x, map_waypoints_y);
-//
-//          	ptsx.push_back(next_wp0[0]);
-//          	ptsx.push_back(next_wp1[0]);
-//          	ptsx.push_back(next_wp2[0]);
-//
-//          	ptsy.push_back(next_wp0[1]);
-//          	ptsy.push_back(next_wp1[1]);
-//          	ptsy.push_back(next_wp2[1]);
-//
-//          	//transform points into car frame of reference
-//          	for (int i = 0; i < ptsx.size(); i++) {
-//          		double shift_x = ptsx[i] - ref_x;
-//          		double shift_y = ptsy[i] - ref_y;
-//          		ptsx[i] = (shift_x * cos(0-ref_yaw) - shift_y * sin(0-ref_yaw));
-//          		ptsy[i] = (shift_x * sin(0-ref_yaw) + shift_y * cos(0-ref_yaw));
-//          	}
-//
-//          	tk::spline s;
-//
-//          	s.set_points(ptsx, ptsy);
-//
-//          	for (int i = 0; i < prev_size; i++) {
-//          		next_x_vals.push_back(previous_path_x[i]);
-//          		next_y_vals.push_back(previous_path_y[i]);
-//          	}
-//
-//          	double target_x = 30.0;
-//          	double target_y = s(target_x);
-//          	double target_dist = sqrt((target_x)*(target_x) + (target_y)*(target_y));
-//
-//          	double x_add_on = 0.0;
-//
-//          	for (int i = 1; i <= 50 - prev_size; i++) {
-//          		double N = (target_dist / (0.02*ref_vel/2.24));
-//          		double x_point = x_add_on + (target_x)/N;
-//          		double y_point = s(x_point);
-//
-//          		x_add_on = x_point;
-//
-//          		double x_ref = x_point;
-//          		double y_ref = y_point;
-//
-//          		x_point = (x_ref * cos(ref_yaw) - y_ref * sin(ref_yaw));
-//          		y_point = (x_ref * sin(ref_yaw) + y_ref * cos(ref_yaw));
-//
-//          		x_point += ref_x;
-//          		y_point += ref_y;
-//
-//          		next_x_vals.push_back(x_point);
-//          		next_y_vals.push_back(y_point);
-//          	}
-
-          	for (int i = 0; i < next_x_vals.size(); i++) {
-          		//cout << "Next x and y - " << i << ": " << next_x_vals[i] << ", " << next_y_vals[i] << endl;
-          	}
-
           	cout << " " << endl;
 
           	//END
